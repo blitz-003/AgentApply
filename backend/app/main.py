@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
 from app.api.health import router as health_router
+from app.api.resumes import router as resumes_router
+from app.api.templates import router as templates_router
 from app.config import settings
 from app.middleware.auth import AuthMiddleware
 
@@ -19,3 +21,5 @@ app.add_middleware(
 
 app.include_router(health_router, prefix=settings.api_v1_prefix)
 app.include_router(auth_router, prefix=f"{settings.api_v1_prefix}/auth")
+app.include_router(resumes_router, prefix=f"{settings.api_v1_prefix}/resumes")
+app.include_router(templates_router, prefix=f"{settings.api_v1_prefix}/templates")

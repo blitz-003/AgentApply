@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
 
 from app.api.deps import get_current_user
 from app.schemas.auth import UserResponse
@@ -79,3 +79,37 @@ async def update_resume_template(
     if not result:
         raise HTTPException(status_code=404, detail="Resume or template not found")
     return result
+
+
+@router.post("/{resume_id}/upload")
+async def upload_resume(
+    resume_id: str,
+    resume: UploadFile = File(...),
+    current_user: UserResponse = Depends(get_current_user),
+):
+    if not resume.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+
+    file_ext = resume.filename.rsplit(".", 1)[-1].lower() if "." in resume.filename else ""
+    if file_ext not in ["pdf", "docx"]:
+        raise HTTPException(
+            status_code=415,
+            detail="Unsupported file type. Please upload PDF or DOCX.",
+        )
+
+    file_content = await resume.read()
+    max_size = 10 * 1024 * 1024  # 10MB
+    if len(file_content) > max_size:
+        raise HTTPException(status_code=413, detail="File too large. Maximum size is 10MB.")
+
+    try:
+        result = resume_service.upload_resume(
+            current_user.id, resume_id, file_content, resume.filename
+        )
+        if not result:
+            raise HTTPException(status_code=404, detail="Resume not found")
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to parse resume")

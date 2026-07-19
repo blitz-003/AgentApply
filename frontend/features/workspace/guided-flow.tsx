@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useGenerateResume, useUpdateResume } from "./hooks";
+import { useState, useRef } from "react";
+import { useGenerateResume, useUpdateResume, useUploadResume } from "./hooks";
 
 interface GuidedFlowProps {
   resumeId: string;
 }
 
-type Step = "target-job" | "resume-source" | "analysis" | "summary";
+type Step = "target-job" | "resume-source" | "uploading" | "analysis" | "summary";
 
 export function GuidedFlow({ resumeId }: GuidedFlowProps) {
   const [step, setStep] = useState<Step>("target-job");
@@ -17,9 +17,12 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
   const [analysisResult, setAnalysisResult] = useState<{
     ats_analysis?: { overall_score: number; strengths: string[]; weaknesses: string[]; recommendations: string[]; missing_keywords: string[] };
   } | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const generateMutation = useGenerateResume(resumeId);
   const updateMutation = useUpdateResume(resumeId);
+  const uploadMutation = useUploadResume(resumeId);
 
   const handleTargetJobNext = () => {
     if (hasJobDescription === false && targetRole.trim()) {
@@ -46,6 +49,55 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
         setStep("target-job");
       },
     });
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+    if (!validTypes.includes(file.type)) {
+      setUploadError("Please upload a PDF or DOCX file");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      setUploadError("File too large. Maximum size is 10MB");
+      return;
+    }
+
+    setUploadError(null);
+    setStep("uploading");
+
+    uploadMutation.mutate(file, {
+      onSuccess: () => {
+        setStep("analysis");
+        const data: { job_description?: string; target_role?: string } = {};
+        if (hasJobDescription && jobDescription.trim()) {
+          data.job_description = jobDescription;
+        } else if (targetRole.trim()) {
+          data.target_role = targetRole;
+        }
+        generateMutation.mutate(data, {
+          onSuccess: (result) => {
+            setAnalysisResult(result);
+            setStep("summary");
+          },
+          onError: () => {
+            setStep("target-job");
+          },
+        });
+      },
+      onError: (error) => {
+        setUploadError(error.message || "Failed to upload resume");
+        setStep("resume-source");
+      },
+    });
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleGenerateResume = () => {
@@ -150,16 +202,27 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
             </p>
           </div>
 
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.docx"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+
           <div className="grid grid-cols-2 gap-4">
             <button
-              className="flex flex-col items-center gap-3 rounded-lg border-2 border-zinc-300 p-6 text-center transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-500"
-              disabled
+              onClick={handleUploadClick}
+              disabled={uploadMutation.isPending}
+              className="flex flex-col items-center gap-3 rounded-lg border-2 border-zinc-300 p-6 text-center transition-colors hover:border-zinc-400 dark:border-zinc-700 dark:hover:border-zinc-500 disabled:opacity-50"
             >
               <svg className="h-10 w-10 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 16v-8m0 0l-3 3m3-3l3 3M9 20H7a2 2 0 01-2-2V6a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V18a2 2 0 01-2 2h-2" />
               </svg>
-              <span className="font-medium text-zinc-700 dark:text-zinc-300">Upload Resume</span>
-              <span className="text-xs text-zinc-500">Coming soon</span>
+              <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                {uploadMutation.isPending ? "Uploading..." : "Upload Resume"}
+              </span>
+              <span className="text-xs text-zinc-500">PDF or DOCX</span>
             </button>
 
             <button
@@ -174,12 +237,36 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
             </button>
           </div>
 
+          {uploadError && (
+            <p className="text-sm text-center text-red-600 dark:text-red-400">
+              {uploadError}
+            </p>
+          )}
+
           <button
             onClick={() => setStep("target-job")}
             className="w-full text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
           >
             Back
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "uploading") {
+    return (
+      <div className="flex flex-1 items-center justify-center p-8">
+        <div className="w-full max-w-lg text-center space-y-6">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+              Uploading your resume...
+            </h2>
+            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+              We&apos;re parsing and extracting content from your resume.
+            </p>
+          </div>
         </div>
       </div>
     );

@@ -4,11 +4,14 @@ from app.schemas.resume import (
     CreateResumeRequest,
     MessageResponse,
     ResumeCreateResponse,
+    ResumeData,
     ResumeDetailResponse,
     ResumeListOutput,
     ResumeListResponse,
     UpdateResumeRequest,
 )
+from app.services.resume_normalizer import resume_normalizer
+from app.services.resume_parser import resume_parser
 
 
 class ResumeService:
@@ -91,6 +94,30 @@ class ResumeService:
         if not result:
             return None
         return MessageResponse(message="Template updated successfully")
+
+    def upload_resume(
+        self, user_id: str, resume_id: str, file_content: bytes, filename: str
+    ) -> ResumeData | None:
+        result = resume_repository.get(resume_id, user_id)
+        if not result:
+            return None
+
+        file_ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+
+        if file_ext == "pdf":
+            raw_data = resume_parser.parse_pdf(file_content)
+        elif file_ext == "docx":
+            raw_data = resume_parser.parse_docx(file_content)
+        else:
+            raise ValueError("Unsupported file type. Please upload PDF or DOCX.")
+
+        normalized_data = resume_normalizer.normalize(raw_data)
+
+        resume_repository.update(
+            resume_id, user_id, {"resume_data": normalized_data.model_dump()}
+        )
+
+        return normalized_data
 
 
 resume_service = ResumeService()

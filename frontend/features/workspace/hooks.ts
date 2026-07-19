@@ -122,3 +122,13 @@ export function useDeleteCoverLetter(resumeId: string) {
     },
   });
 }
+
+export function useUploadResume(resumeId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => resumeApi.upload(resumeId, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
+    },
+  });
+}

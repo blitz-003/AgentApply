@@ -4,6 +4,7 @@ import type {
   ResumeDetail,
   CreateResumeRequest,
   CreateResumeResponse,
+  ResumeData,
 } from "@/types/resume";
 
 export const resumeApi = {
@@ -21,4 +22,9 @@ export const resumeApi = {
   update: (id: string, data: { title?: string; template_id?: string; resume_data?: Record<string, unknown> }) =>
     api.patch<{ message: string }>(`/resumes/${id}`, data),
   delete: (id: string) => api.delete<void>(`/resumes/${id}`),
+  upload: (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append("resume", file);
+    return api.upload<ResumeData>(`/resumes/${id}/upload`, formData);
+  },
 };

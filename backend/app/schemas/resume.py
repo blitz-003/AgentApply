@@ -17,6 +17,43 @@ class UpdateTemplateRequest(BaseModel):
     template_id: str
 
 
+class PersonalInfo(BaseModel):
+    name: str = ""
+    email: str = ""
+    phone: str = ""
+    location: str = ""
+    linkedin: str = ""
+    github: str = ""
+
+
+class ExperienceEntry(BaseModel):
+    company: str = ""
+    position: str = ""
+    description: str = ""
+
+
+class ProjectEntry(BaseModel):
+    title: str = ""
+    description: str = ""
+
+
+class EducationEntry(BaseModel):
+    institution: str = ""
+    degree: str = ""
+    field: str = ""
+    start_date: str = ""
+    end_date: str = ""
+
+
+class ResumeData(BaseModel):
+    personal_info: PersonalInfo = PersonalInfo()
+    summary: str = ""
+    experience: list[ExperienceEntry] = []
+    projects: list[ProjectEntry] = []
+    skills: list[str] = []
+    education: list[EducationEntry] = []
+
+
 class ResumeListResponse(BaseModel):
     id: str
     title: str

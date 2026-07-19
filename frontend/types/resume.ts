@@ -30,3 +30,40 @@ export interface CreateResumeResponse {
   id: string;
   title: string;
 }
+
+export interface PersonalInfo {
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+  linkedin: string;
+  github: string;
+}
+
+export interface ExperienceEntry {
+  company: string;
+  position: string;
+  description: string;
+}
+
+export interface ProjectEntry {
+  title: string;
+  description: string;
+}
+
+export interface EducationEntry {
+  institution: string;
+  degree: string;
+  field: string;
+  start_date: string;
+  end_date: string;
+}
+
+export interface ResumeData {
+  personal_info: PersonalInfo;
+  summary: string;
+  experience: ExperienceEntry[];
+  projects: ProjectEntry[];
+  skills: string[];
+  education: EducationEntry[];
+}

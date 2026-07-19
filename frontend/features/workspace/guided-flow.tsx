@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useGenerateResume, useUpdateResume, useUploadResume } from "./hooks";
+import { useToast } from "@/components/toast-context";
 
 interface GuidedFlowProps {
   resumeId: string;
@@ -23,6 +24,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
   const generateMutation = useGenerateResume(resumeId);
   const updateMutation = useUpdateResume(resumeId);
   const uploadMutation = useUploadResume(resumeId);
+  const { addToast } = useToast();
 
   const handleTargetJobNext = () => {
     if (hasJobDescription === false && targetRole.trim()) {
@@ -44,9 +46,11 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
       onSuccess: (result) => {
         setAnalysisResult(result);
         setStep("summary");
+        addToast("AI analysis completed", "success");
       },
       onError: () => {
         setStep("target-job");
+        addToast("AI analysis failed", "error");
       },
     });
   };
@@ -83,15 +87,18 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
           onSuccess: (result) => {
             setAnalysisResult(result);
             setStep("summary");
+            addToast("Tailored resume generated", "success");
           },
           onError: () => {
             setStep("target-job");
+            addToast("AI generation failed", "error");
           },
         });
       },
       onError: (error) => {
         setUploadError(error.message || "Failed to upload resume");
         setStep("resume-source");
+        addToast("Resume upload failed", "error");
       },
     });
   };

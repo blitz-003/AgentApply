@@ -13,6 +13,8 @@ import {
 } from "./hooks";
 import { ATSAnalysisPanel } from "./ats-analysis-panel";
 import { CoverLettersPanel } from "./cover-letters-panel";
+import { useToast } from "@/components/toast-context";
+import { LoadingSpinner } from "@/components/loading-spinner";
 
 interface ResumeEditorProps {
   resumeId: string;
@@ -131,6 +133,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const improveProjectMutation = useImproveProject(resumeId);
   const suggestSkillsMutation = useSuggestSkills(resumeId);
   const exportMutation = useExportResume();
+  const { addToast } = useToast();
 
   const buildResumeData = useCallback((): Record<string, unknown> => ({
     personal_information: personalInfo,
@@ -143,7 +146,13 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   }), [personalInfo, summary, experience, projects, skills, education, coverLetter]);
 
   const handleSave = () => {
-    updateMutation.mutate({ resume_data: buildResumeData() });
+    updateMutation.mutate(
+      { resume_data: buildResumeData() },
+      {
+        onSuccess: () => addToast("Resume updated successfully", "success"),
+        onError: () => addToast("Resume save failed", "error"),
+      }
+    );
   };
 
   const handleImproveSummary = () => {
@@ -198,7 +207,10 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   };
 
   const handleExport = () => {
-    exportMutation.mutate(resumeId);
+    exportMutation.mutate(resumeId, {
+      onSuccess: () => addToast("Resume exported successfully", "success"),
+      onError: () => addToast("PDF export failed", "error"),
+    });
   };
 
   return (

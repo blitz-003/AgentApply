@@ -1,9 +1,12 @@
 export interface ATSAnalysis {
+  id?: string;
+  resume_id?: string;
   overall_score: number;
   strengths: string[];
   weaknesses: string[];
   recommendations: string[];
   missing_keywords: string[];
+  analyzed_at?: string;
 }
 
 export interface GenerateResponse {
@@ -12,8 +15,24 @@ export interface GenerateResponse {
   ats_analysis: ATSAnalysis;
 }
 
-export interface CoverLetterResponse {
+export interface CoverLetter {
+  id: string;
+  company_name: string;
+  job_title: string;
   content: string;
+  created_at?: string;
+}
+
+export interface CoverLetterListResponse {
+  items: CoverLetter[];
+}
+
+export interface CoverLetterResponse {
+  id: string;
+  company_name: string;
+  job_title: string;
+  content: string;
+  created_at?: string;
 }
 
 export interface SummaryResponse {

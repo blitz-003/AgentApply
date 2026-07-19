@@ -1,6 +1,8 @@
 from app.infrastructure.llm_client import llm_client
 from app.infrastructure.prompt_builder import prompt_builder
 from app.infrastructure.response_parser import response_parser
+from app.repositories.ats_analysis import ats_analysis_repository
+from app.repositories.cover_letter import cover_letter_repository
 from app.repositories.resume import resume_repository
 from app.schemas.ai import (
     ATSAnalysisResponse,
@@ -56,10 +58,23 @@ class ResumeAIOrchestrator:
             resume_id, user_id, {"resume_data": generated_resume_data}
         )
 
+        ats_analysis_data = parsed.get("ats_analysis", {})
+        ats_analysis_repository.upsert(resume_id, ats_analysis_data)
+
+        cover_letter_data = parsed.get("cover_letter", {})
+        content = cover_letter_data.get("content", "")
+        if content:
+            cover_letter_repository.create(
+                resume_id,
+                cover_letter_data.get("company_name", ""),
+                cover_letter_data.get("job_title", ""),
+                content,
+            )
+
         return GenerateResponse(
             resume_data=generated_resume_data,
-            cover_letter=parsed.get("cover_letter", {}),
-            ats_analysis=parsed.get("ats_analysis", {}),
+            cover_letter=cover_letter_data,
+            ats_analysis=ats_analysis_data,
         )
 
     def ats_analysis(
@@ -79,13 +94,17 @@ class ResumeAIOrchestrator:
         raw_response = llm_client.chat(system_prompt, user_prompt)
         parsed = response_parser.parse_json(raw_response)
 
-        return ATSAnalysisResponse(
+        result = ATSAnalysisResponse(
             overall_score=parsed.get("overall_score", 0),
             strengths=parsed.get("strengths", []),
             weaknesses=parsed.get("weaknesses", []),
             recommendations=parsed.get("recommendations", []),
             missing_keywords=parsed.get("missing_keywords", []),
         )
+
+        ats_analysis_repository.upsert(resume_id, result.model_dump())
+
+        return result
 
     def cover_letter(
         self,
@@ -103,8 +122,18 @@ class ResumeAIOrchestrator:
         )
         raw_response = llm_client.chat(system_prompt, user_prompt)
         parsed = response_parser.parse_json(raw_response)
+        content = parsed.get("content", "")
 
-        return CoverLetterResponse(content=parsed.get("content", ""))
+        cover_letter = cover_letter_repository.create(
+            resume_id, company_name, job_title, content
+        )
+
+        return CoverLetterResponse(
+            id=cover_letter["id"],
+            company_name=company_name,
+            job_title=job_title,
+            content=content,
+        )
 
     def improve_summary(
         self, user_id: str, resume_id: str, summary: str

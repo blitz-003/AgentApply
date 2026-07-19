@@ -10,6 +10,8 @@ import {
   useImproveProject,
   useSuggestSkills,
 } from "./hooks";
+import { ATSAnalysisPanel } from "./ats-analysis-panel";
+import { CoverLettersPanel } from "./cover-letters-panel";
 
 interface ResumeEditorProps {
   resumeId: string;
@@ -261,6 +263,9 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
             </div>
           </section>
 
+          {/* ATS Analysis */}
+          <ATSAnalysisPanel resumeId={resumeId} />
+
           {/* Professional Summary */}
           <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
             <div className="mb-4 flex items-center justify-between">
@@ -510,6 +515,9 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
               placeholder="Your cover letter will be generated during AI analysis..."
             />
           </section>
+
+          {/* Saved Cover Letters */}
+          <CoverLettersPanel resumeId={resumeId} />
         </div>
       </div>
     </div>

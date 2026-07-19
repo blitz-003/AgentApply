@@ -34,6 +34,14 @@ export function useGenerateResume(resumeId: string) {
   });
 }
 
+export function useAtsAnalysis(resumeId: string) {
+  return useQuery({
+    queryKey: ["atsAnalysis", resumeId],
+    queryFn: () => aiApi.getAtsAnalysis(resumeId),
+    enabled: !!resumeId,
+  });
+}
+
 export function useImproveSummary(resumeId: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -93,6 +101,24 @@ export function useSuggestSkills(resumeId: string) {
     mutationFn: (skills: string[]) => aiApi.suggestSkills(resumeId, skills),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
+    },
+  });
+}
+
+export function useCoverLetters(resumeId: string) {
+  return useQuery({
+    queryKey: ["coverLetters", resumeId],
+    queryFn: () => aiApi.listCoverLetters(resumeId),
+    enabled: !!resumeId,
+  });
+}
+
+export function useDeleteCoverLetter(resumeId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (coverLetterId: string) => aiApi.deleteCoverLetter(resumeId, coverLetterId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coverLetters", resumeId] });
     },
   });
 }

@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import get_current_user
+from app.repositories.ats_analysis import ats_analysis_repository
+from app.repositories.cover_letter import cover_letter_repository
 from app.schemas.ai import (
     ATSAnalysisRequest,
     ATSAnalysisResponse,
+    CoverLetterListResponse,
     CoverLetterRequest,
     CoverLetterResponse,
     ExperienceResponse,
@@ -173,3 +176,37 @@ async def suggest_skills(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception:
         raise HTTPException(status_code=500, detail="Skills suggestion failed")
+
+
+@router.get(
+    "/{resume_id}/ai/ats-analysis", response_model=ATSAnalysisResponse | None
+)
+async def get_ats_analysis(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    analysis = ats_analysis_repository.get_by_resume(resume_id)
+    return analysis
+
+
+@router.get(
+    "/{resume_id}/ai/cover-letters", response_model=CoverLetterListResponse
+)
+async def list_cover_letters(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    cover_letters = cover_letter_repository.list_by_resume(resume_id)
+    return CoverLetterListResponse(items=cover_letters)
+
+
+@router.delete("/{resume_id}/ai/cover-letters/{cover_letter_id}")
+async def delete_cover_letter(
+    resume_id: str,
+    cover_letter_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    deleted = cover_letter_repository.delete(cover_letter_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Cover letter not found")
+    return {"message": "Cover letter deleted"}

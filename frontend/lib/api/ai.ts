@@ -3,6 +3,7 @@ import type {
   GenerateResponse,
   ATSAnalysis,
   CoverLetterResponse,
+  CoverLetterListResponse,
   SummaryResponse,
   ExperienceResponse,
   ProjectResponse,
@@ -16,8 +17,17 @@ export const aiApi = {
   atsAnalysis: (resumeId: string, data: { job_description?: string; target_role?: string }) =>
     api.post<ATSAnalysis>(`/resumes/${resumeId}/ai/ats-analysis`, data),
 
+  getAtsAnalysis: (resumeId: string) =>
+    api.get<ATSAnalysis | null>(`/resumes/${resumeId}/ai/ats-analysis`),
+
   coverLetter: (resumeId: string, data: { company_name: string; job_title: string; job_description: string }) =>
     api.post<CoverLetterResponse>(`/resumes/${resumeId}/ai/cover-letter`, data),
+
+  listCoverLetters: (resumeId: string) =>
+    api.get<CoverLetterListResponse>(`/resumes/${resumeId}/ai/cover-letters`),
+
+  deleteCoverLetter: (resumeId: string, coverLetterId: string) =>
+    api.delete(`/resumes/${resumeId}/ai/cover-letters/${coverLetterId}`),
 
   improveSummary: (resumeId: string, summary: string) =>
     api.post<SummaryResponse>(`/resumes/${resumeId}/ai/improve-summary`, { summary }),

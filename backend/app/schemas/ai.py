@@ -59,15 +59,26 @@ class GenerateResponse(BaseModel):
 
 
 class ATSAnalysisResponse(BaseModel):
+    id: str | None = None
+    resume_id: str | None = None
     overall_score: int
     strengths: list[str]
     weaknesses: list[str]
     recommendations: list[str]
     missing_keywords: list[str]
+    analyzed_at: str | None = None
 
 
 class CoverLetterResponse(BaseModel):
+    id: str
+    company_name: str
+    job_title: str
     content: str
+    created_at: str | None = None
+
+
+class CoverLetterListResponse(BaseModel):
+    items: list[CoverLetterResponse]
 
 
 class SummaryResponse(BaseModel):

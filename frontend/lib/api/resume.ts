@@ -1,6 +1,7 @@
 import { api } from "./client";
 import type {
   ResumeListResponse,
+  ResumeDetail,
   CreateResumeRequest,
   CreateResumeResponse,
 } from "@/types/resume";
@@ -14,7 +15,10 @@ export const resumeApi = {
     const query = searchParams.toString();
     return api.get<ResumeListResponse>(`/resumes${query ? `?${query}` : ""}`);
   },
+  get: (id: string) => api.get<ResumeDetail>(`/resumes/${id}`),
   create: (data: CreateResumeRequest) =>
     api.post<CreateResumeResponse>("/resumes", data),
+  update: (id: string, data: { title?: string; template_id?: string; resume_data?: Record<string, unknown> }) =>
+    api.patch<{ message: string }>(`/resumes/${id}`, data),
   delete: (id: string) => api.delete<void>(`/resumes/${id}`),
 };

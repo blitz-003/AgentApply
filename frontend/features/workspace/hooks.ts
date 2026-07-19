@@ -132,3 +132,19 @@ export function useUploadResume(resumeId: string) {
     },
   });
 }
+
+export function useExportResume() {
+  return useMutation({
+    mutationFn: async (resumeId: string) => {
+      const blob = await resumeApi.export(resumeId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    },
+  });
+}

@@ -7,6 +7,8 @@ import type {
   ResumeData,
 } from "@/types/resume";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
 export const resumeApi = {
   list: (params?: { search?: string; page?: number; limit?: number }) => {
     const searchParams = new URLSearchParams();
@@ -26,5 +28,19 @@ export const resumeApi = {
     const formData = new FormData();
     formData.append("resume", file);
     return api.upload<ResumeData>(`/resumes/${id}/upload`, formData);
+  },
+  export: async (id: string): Promise<Blob> => {
+    const url = `${API_BASE_URL}/resumes/${id}/export`;
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: "Export failed" }));
+      throw new Error(error.detail || `HTTP ${response.status}`);
+    }
+
+    return response.blob();
   },
 };

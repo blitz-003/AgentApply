@@ -10,6 +10,7 @@ from app.schemas.resume import (
     ResumeListResponse,
     UpdateResumeRequest,
 )
+from app.services.pdf_service import pdf_service
 from app.services.resume_normalizer import resume_normalizer
 from app.services.resume_parser import resume_parser
 
@@ -118,6 +119,21 @@ class ResumeService:
         )
 
         return normalized_data
+
+    def export_resume(
+        self, user_id: str, resume_id: str
+    ) -> tuple[bytes, str] | None:
+        result = resume_repository.get(resume_id, user_id)
+        if not result:
+            return None
+
+        resume_data = result.get("resume_data", {})
+        template_id = result.get("template_id")
+
+        pdf_bytes = pdf_service.generate_pdf(resume_data, template_id)
+        filename = pdf_service.get_filename(resume_data)
+
+        return pdf_bytes, filename
 
 
 resume_service = ResumeService()

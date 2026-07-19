@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
+from fastapi.responses import StreamingResponse
 
 from app.api.deps import get_current_user
 from app.schemas.auth import UserResponse
@@ -113,3 +114,28 @@ async def upload_resume(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to parse resume")
+
+
+@router.post("/{resume_id}/export")
+async def export_resume(
+    resume_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    try:
+        result = resume_service.export_resume(current_user.id, resume_id)
+        if not result:
+            raise HTTPException(status_code=404, detail="Resume not found")
+
+        pdf_bytes, filename = result
+
+        return StreamingResponse(
+            iter([pdf_bytes]),
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"'
+            },
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to export resume")

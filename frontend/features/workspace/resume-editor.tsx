@@ -9,6 +9,7 @@ import {
   useImproveExperience,
   useImproveProject,
   useSuggestSkills,
+  useExportResume,
 } from "./hooks";
 import { ATSAnalysisPanel } from "./ats-analysis-panel";
 import { CoverLettersPanel } from "./cover-letters-panel";
@@ -129,6 +130,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const improveExperienceMutation = useImproveExperience(resumeId);
   const improveProjectMutation = useImproveProject(resumeId);
   const suggestSkillsMutation = useSuggestSkills(resumeId);
+  const exportMutation = useExportResume();
 
   const buildResumeData = useCallback((): Record<string, unknown> => ({
     personal_information: personalInfo,
@@ -195,19 +197,32 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
     setSkills((prev) => prev.filter((s) => s !== skill));
   };
 
+  const handleExport = () => {
+    exportMutation.mutate(resumeId);
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-3 dark:border-zinc-800 dark:bg-zinc-950">
         <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {resume.title}
         </h1>
-        <button
-          onClick={handleSave}
-          disabled={updateMutation.isPending}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-        >
-          {updateMutation.isPending ? "Saving..." : "Save"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            disabled={exportMutation.isPending}
+            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            {exportMutation.isPending ? "Exporting..." : "Export PDF"}
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={updateMutation.isPending}
+            className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          >
+            {updateMutation.isPending ? "Saving..." : "Save"}
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6">

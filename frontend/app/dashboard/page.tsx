@@ -13,10 +13,14 @@ import { SearchBar } from "@/features/dashboard/search-bar";
 import { EmptyState } from "@/features/dashboard/empty-state";
 import { SkeletonCard } from "@/features/dashboard/skeleton-card";
 import { ResumeCard } from "@/features/dashboard/resume-card";
+import { ErrorState } from "@/components/error-state";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { useToast } from "@/components/toast-context";
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { addToast } = useToast();
   const {
     data,
     isLoading,
@@ -36,10 +40,15 @@ export default function DashboardPage() {
 
   const handleCreateResume = async () => {
     if (!newResumeTitle.trim()) return;
-    const result = await createResume.mutateAsync({ title: newResumeTitle });
-    setShowCreateDialog(false);
-    setNewResumeTitle("");
-    router.push(`/dashboard/resumes/${result.id}`);
+    try {
+      const result = await createResume.mutateAsync({ title: newResumeTitle });
+      setShowCreateDialog(false);
+      setNewResumeTitle("");
+      addToast("Resume created successfully", "success");
+      router.push(`/dashboard/resumes/${result.id}`);
+    } catch {
+      addToast("Failed to create resume", "error");
+    }
   };
 
   const handleDeleteClick = (id: string) => {
@@ -48,8 +57,13 @@ export default function DashboardPage() {
 
   const handleConfirmDelete = async () => {
     if (!deleteId) return;
-    await deleteResume.mutateAsync(deleteId);
-    setDeleteId(null);
+    try {
+      await deleteResume.mutateAsync(deleteId);
+      setDeleteId(null);
+      addToast("Resume deleted successfully", "success");
+    } catch {
+      addToast("Failed to delete resume", "error");
+    }
   };
 
   const totalPages = data ? Math.ceil(data.total / data.limit) : 0;
@@ -86,17 +100,7 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : isError ? (
-            <div className="py-16 text-center">
-              <p className="text-zinc-600 dark:text-zinc-400">
-                Unable to load resumes.
-              </p>
-              <button
-                onClick={() => refetch()}
-                className="mt-4 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-              >
-                Retry
-              </button>
-            </div>
+            <ErrorState message="Unable to load resumes" onRetry={() => refetch()} />
           ) : data?.items.length === 0 ? (
             <EmptyState onCreateResume={() => setShowCreateDialog(true)} />
           ) : (

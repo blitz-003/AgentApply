@@ -7,7 +7,7 @@ interface CoverLettersPanelProps {
 }
 
 export function CoverLettersPanel({ resumeId }: CoverLettersPanelProps) {
-  const { data, isLoading } = useCoverLetters(resumeId);
+  const { data, isLoading, isError } = useCoverLetters(resumeId);
   const deleteMutation = useDeleteCoverLetter(resumeId);
 
   if (isLoading) {
@@ -19,6 +19,16 @@ export function CoverLettersPanel({ resumeId }: CoverLettersPanelProps) {
             Loading cover letters...
           </span>
         </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          Failed to load cover letters.
+        </p>
       </div>
     );
   }
@@ -46,6 +56,7 @@ export function CoverLettersPanel({ resumeId }: CoverLettersPanelProps) {
             <button
               onClick={() => deleteMutation.mutate(letter.id)}
               disabled={deleteMutation.isPending}
+              aria-label="Delete cover letter"
               className="rounded-md p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
             >
               <svg

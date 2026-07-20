@@ -15,7 +15,7 @@ export default function ResumePage() {
     <ProtectedRoute>
       {isLoading ? (
         <div className="flex flex-1 items-center justify-center">
-          <div className="text-zinc-500">Loading resume...</div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
         </div>
       ) : error ? (
         <div className="flex flex-1 items-center justify-center">

@@ -7,7 +7,7 @@ interface ATSAnalysisPanelProps {
 }
 
 export function ATSAnalysisPanel({ resumeId }: ATSAnalysisPanelProps) {
-  const { data: analysis, isLoading } = useAtsAnalysis(resumeId);
+  const { data: analysis, isLoading, isError } = useAtsAnalysis(resumeId);
 
   if (isLoading) {
     return (
@@ -18,6 +18,16 @@ export function ATSAnalysisPanel({ resumeId }: ATSAnalysisPanelProps) {
             Loading ATS analysis...
           </span>
         </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          Failed to load ATS analysis.
+        </p>
       </div>
     );
   }

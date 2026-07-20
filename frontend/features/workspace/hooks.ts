@@ -148,3 +148,14 @@ export function useExportResume() {
     },
   });
 }
+
+export function useFillFields(resumeId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { job_description?: string; target_role?: string }) =>
+      aiApi.fillFields(resumeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
+    },
+  });
+}

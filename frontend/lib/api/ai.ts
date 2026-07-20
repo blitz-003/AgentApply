@@ -8,6 +8,7 @@ import type {
   ExperienceResponse,
   ProjectResponse,
   SkillsResponse,
+  FillFieldsResponse,
 } from "@/types/ai";
 
 export const aiApi = {
@@ -46,4 +47,7 @@ export const aiApi = {
 
   suggestSkills: (resumeId: string, skills: string[]) =>
     api.post<SkillsResponse>(`/resumes/${resumeId}/ai/suggest-skills`, { skills }),
+
+  fillFields: (resumeId: string, data: { job_description?: string; target_role?: string }) =>
+    api.post<FillFieldsResponse>(`/resumes/${resumeId}/ai/fill-fields`, data),
 };

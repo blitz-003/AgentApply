@@ -9,7 +9,6 @@ import {
   useImproveExperience,
   useImproveProject,
   useSuggestSkills,
-  useExportResume,
 } from "./hooks";
 import { ATSAnalysisPanel } from "./ats-analysis-panel";
 import { CoverLettersPanel } from "./cover-letters-panel";
@@ -50,7 +49,7 @@ interface EducationEntry {
 }
 
 function getPersonalInfo(data: Record<string, unknown>): PersonalInfo {
-  const info = (data.personal_information as Record<string, string>) || {};
+  const info = (data.personal_info as Record<string, string>) || {};
   return {
     name: info.name || "",
     email: info.email || "",
@@ -62,7 +61,7 @@ function getPersonalInfo(data: Record<string, unknown>): PersonalInfo {
 }
 
 function getSummary(data: Record<string, unknown>): string {
-  return (data.professional_summary as string) || "";
+  return (data.summary as string) || "";
 }
 
 function getExperience(data: Record<string, unknown>): ExperienceEntry[] {
@@ -110,10 +109,6 @@ function getEducation(data: Record<string, unknown>): EducationEntry[] {
   return [];
 }
 
-function getCoverLetter(data: Record<string, unknown>): string {
-  return (data.cover_letter as string) || "";
-}
-
 export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const resumeData = (resume.resume_data as Record<string, unknown>) || {};
 
@@ -123,7 +118,6 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const [projects, setProjects] = useState<ProjectEntry[]>(() => getProjects(resumeData));
   const [skills, setSkills] = useState<string[]>(() => getSkills(resumeData));
   const [education] = useState<EducationEntry[]>(() => getEducation(resumeData));
-  const [coverLetter, setCoverLetter] = useState(() => getCoverLetter(resumeData));
   const [newSkill, setNewSkill] = useState("");
 
   const updateMutation = useUpdateResume(resumeId);
@@ -132,18 +126,16 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const improveExperienceMutation = useImproveExperience(resumeId);
   const improveProjectMutation = useImproveProject(resumeId);
   const suggestSkillsMutation = useSuggestSkills(resumeId);
-  const exportMutation = useExportResume();
   const { addToast } = useToast();
 
   const buildResumeData = useCallback((): Record<string, unknown> => ({
-    personal_information: personalInfo,
-    professional_summary: summary,
+    personal_info: personalInfo,
+    summary,
     experience,
     projects,
     skills,
     education,
-    cover_letter: coverLetter,
-  }), [personalInfo, summary, experience, projects, skills, education, coverLetter]);
+  }), [personalInfo, summary, experience, projects, skills, education]);
 
   const handleSave = () => {
     updateMutation.mutate(
@@ -158,12 +150,14 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const handleImproveSummary = () => {
     improveSummaryMutation.mutate(summary, {
       onSuccess: (result) => setSummary(result.summary),
+      onError: () => addToast("AI request failed", "error"),
     });
   };
 
   const handleRewriteSummary = () => {
     rewriteSummaryMutation.mutate(summary, {
       onSuccess: (result) => setSummary(result.summary),
+      onError: () => addToast("AI request failed", "error"),
     });
   };
 
@@ -175,6 +169,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
           prev.map((e, i) => (i === index ? result.experience : e))
         );
       },
+      onError: () => addToast("AI request failed", "error"),
     });
   };
 
@@ -186,12 +181,14 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
           prev.map((p, i) => (i === index ? result.project : p))
         );
       },
+      onError: () => addToast("AI request failed", "error"),
     });
   };
 
   const handleSuggestSkills = () => {
     suggestSkillsMutation.mutate(skills, {
       onSuccess: (result) => setSkills(result.skills),
+      onError: () => addToast("AI request failed", "error"),
     });
   };
 
@@ -207,10 +204,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   };
 
   const handleExport = () => {
-    exportMutation.mutate(resumeId, {
-      onSuccess: () => addToast("Resume exported successfully", "success"),
-      onError: () => addToast("PDF export failed", "error"),
-    });
+    window.open(`/resume-print?id=${resumeId}`, "_blank");
   };
 
   return (
@@ -222,10 +216,9 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExport}
-            disabled={exportMutation.isPending}
-            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
-            {exportMutation.isPending ? "Exporting..." : "Export PDF"}
+            Export PDF
           </button>
           <button
             onClick={handleSave}
@@ -527,20 +520,6 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 </p>
               )}
             </div>
-          </section>
-
-          {/* Cover Letter */}
-          <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-            <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-              Cover Letter
-            </h2>
-            <textarea
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-              rows={10}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
-              placeholder="Your cover letter will be generated during AI analysis..."
-            />
           </section>
 
           {/* Saved Cover Letters */}

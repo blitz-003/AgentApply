@@ -1,3 +1,4 @@
+import html
 import io
 from datetime import datetime
 
@@ -15,7 +16,7 @@ class PDFService:
         skills = resume_data.get("skills", [])
         projects = resume_data.get("projects", [])
 
-        html = f"""<!DOCTYPE html>
+        html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -124,13 +125,13 @@ class PDFService:
 </head>
 <body>
     <div class="header">
-        <h1>{personal_info.get('name', 'Your Name')}</h1>
+        <h1>{html.escape(personal_info.get('name', 'Your Name'))}</h1>
         <div class="contact-info">
-            {f'<span>{personal_info.get("email", "")}</span>' if personal_info.get('email') else ''}
-            {f'<span>{personal_info.get("phone", "")}</span>' if personal_info.get('phone') else ''}
-            {f'<span>{personal_info.get("location", "")}</span>' if personal_info.get('location') else ''}
-            {f'<span>{personal_info.get("linkedin", "")}</span>' if personal_info.get('linkedin') else ''}
-            {f'<span>{personal_info.get("github", "")}</span>' if personal_info.get('github') else ''}
+            {f'<span>{html.escape(personal_info.get("email", ""))}</span>' if personal_info.get('email') else ''}
+            {f'<span>{html.escape(personal_info.get("phone", ""))}</span>' if personal_info.get('phone') else ''}
+            {f'<span>{html.escape(personal_info.get("location", ""))}</span>' if personal_info.get('location') else ''}
+            {f'<span>{html.escape(personal_info.get("linkedin", ""))}</span>' if personal_info.get('linkedin') else ''}
+            {f'<span>{html.escape(personal_info.get("github", ""))}</span>' if personal_info.get('github') else ''}
         </div>
     </div>
 
@@ -142,7 +143,7 @@ class PDFService:
 </body>
 </html>"""
 
-        return html
+        return html_content
 
     def _render_summary(self, summary: str) -> str:
         if not summary:
@@ -150,7 +151,7 @@ class PDFService:
         return f"""
     <div class="section">
         <h2 class="section-title">Professional Summary</h2>
-        <p class="summary">{summary}</p>
+        <p class="summary">{html.escape(summary)}</p>
     </div>"""
 
     def _render_experience(self, experience: list) -> str:
@@ -162,10 +163,10 @@ class PDFService:
             items += f"""
         <div class="experience-item">
             <div class="item-header">
-                <span class="item-title">{exp.get('position', 'Position')}</span>
-                <span class="item-subtitle">{exp.get('company', 'Company')}</span>
+                <span class="item-title">{html.escape(exp.get('position', 'Position'))}</span>
+                <span class="item-subtitle">{html.escape(exp.get('company', 'Company'))}</span>
             </div>
-            <p class="item-description">{exp.get('description', '')}</p>
+            <p class="item-description">{html.escape(exp.get('description', ''))}</p>
         </div>"""
 
         return f"""
@@ -183,8 +184,8 @@ class PDFService:
             items += f"""
         <div class="education-item">
             <div class="item-header">
-                <span class="item-title">{edu.get('institution', 'Institution')}</span>
-                <span class="item-subtitle">{edu.get('degree', '')} {edu.get('field', '')}</span>
+                <span class="item-title">{html.escape(edu.get('institution', 'Institution'))}</span>
+                <span class="item-subtitle">{html.escape(edu.get('degree', ''))} {html.escape(edu.get('field', ''))}</span>
             </div>
         </div>"""
 
@@ -200,7 +201,7 @@ class PDFService:
 
         items = ""
         for skill in skills:
-            items += f'<span class="skill-item">{skill}</span>'
+            items += f'<span class="skill-item">{html.escape(skill)}</span>'
 
         return f"""
     <div class="section">
@@ -219,9 +220,9 @@ class PDFService:
             items += f"""
         <div class="project-item">
             <div class="item-header">
-                <span class="item-title">{project.get('title', 'Project')}</span>
+                <span class="item-title">{html.escape(project.get('title', 'Project'))}</span>
             </div>
-            <p class="item-description">{project.get('description', '')}</p>
+            <p class="item-description">{html.escape(project.get('description', ''))}</p>
         </div>"""
 
         return f"""
@@ -233,28 +234,10 @@ class PDFService:
     def _html_to_pdf(self, html_content: str) -> bytes:
         try:
             import weasyprint
-
             pdf = weasyprint.HTML(string=html_content).write_pdf()
             return pdf
         except ImportError:
-            try:
-                from reportlab.lib.pagesizes import letter
-                from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-                from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-                from reportlab.lib.units import inch
-
-                buffer = io.BytesIO()
-                doc = SimpleDocTemplate(buffer, pagesize=letter)
-                styles = getSampleStyleSheet()
-                story = []
-
-                story.append(Paragraph("Resume", styles['Title']))
-                story.append(Spacer(1, 12))
-
-                doc.build(story)
-                return buffer.getvalue()
-            except ImportError:
-                raise ValueError("PDF generation not available. Please install weasyprint or reportlab.")
+            raise ValueError("PDF generation not available. Please install weasyprint.")
 
     def get_filename(self, resume_data: dict) -> str:
         name = resume_data.get("personal_info", {}).get("name", "Resume")

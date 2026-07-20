@@ -10,6 +10,8 @@ from app.schemas.auth import (
 class AuthService:
     def register(self, data: RegisterRequest) -> AuthResponse:
         result = supabase_client.sign_up(data.email, data.password, data.name)
+        if not result.user:
+            raise ValueError("Registration failed. Email may already be in use.")
         user = result.user
         return AuthResponse(
             message="Registration successful",
@@ -20,6 +22,8 @@ class AuthService:
 
     def login(self, data: LoginRequest) -> tuple[AuthResponse, str, str]:
         result = supabase_client.sign_in(data.email, data.password)
+        if not result.user or not result.session:
+            raise ValueError("Invalid email or password.")
         session = result.session
         user = result.user
         return (

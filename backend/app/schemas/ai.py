@@ -95,3 +95,12 @@ class ProjectResponse(BaseModel):
 
 class SkillsResponse(BaseModel):
     skills: list[str]
+
+
+class FillFieldsRequest(BaseModel):
+    job_description: str | None = None
+    target_role: str | None = None
+
+
+class FillFieldsResponse(BaseModel):
+    resume_data: dict

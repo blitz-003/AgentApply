@@ -23,7 +23,8 @@ export function ToastContainer() {
           <span className="text-sm font-medium">{toast.message}</span>
           <button
             onClick={() => removeToast(toast.id)}
-            className="ml-2 rounded-full p-1 hover:bg-white/20"
+            aria-label="Close"
+            className="ml-2 rounded-full p-1 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

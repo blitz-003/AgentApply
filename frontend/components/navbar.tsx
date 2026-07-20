@@ -9,9 +9,9 @@ export function Navbar() {
   return (
     <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
       <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <a href="/" className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+        <Link href="/" className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
           Agent Apply
-        </a>
+        </Link>
         <div className="flex items-center gap-4">
           {isLoading ? null : isAuthenticated ? (
             <>

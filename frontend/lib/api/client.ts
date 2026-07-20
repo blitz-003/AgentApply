@@ -6,12 +6,12 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   const url = `${API_BASE_URL}${endpoint}`;
 
   const config: RequestInit = {
+    ...options,
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...options.headers,
     },
-    ...options,
   };
 
   const response = await fetch(url, config);

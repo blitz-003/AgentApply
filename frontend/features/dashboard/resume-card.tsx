@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ResumeListItem } from "@/types/resume";
+import { useExportResume } from "@/features/workspace/hooks";
 
 interface ResumeCardProps {
   resume: ResumeListItem;
@@ -18,6 +19,8 @@ export function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
       year: "numeric",
     }
   );
+
+  const exportMutation = useExportResume();
 
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950">
@@ -40,6 +43,13 @@ export function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
         >
           Edit
         </Link>
+        <button
+          onClick={() => exportMutation.mutate(resume.id)}
+          disabled={exportMutation.isPending}
+          className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        >
+          {exportMutation.isPending ? "Exporting..." : "Download PDF"}
+        </button>
         <button
           onClick={() => onDelete(resume.id)}
           disabled={isDeleting}

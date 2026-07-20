@@ -61,3 +61,7 @@ export interface ProjectResponse {
 export interface SkillsResponse {
   skills: string[];
 }
+
+export interface FillFieldsResponse {
+  resume_data: Record<string, unknown>;
+}

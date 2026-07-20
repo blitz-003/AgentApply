@@ -43,6 +43,8 @@ export interface ExperienceInput {
   company: string;
   position: string;
   description: string;
+  start_date: string;
+  end_date: string;
 }
 
 export interface ExperienceResponse {
@@ -52,6 +54,8 @@ export interface ExperienceResponse {
 export interface ProjectInput {
   title: string;
   description: string;
+  start_date: string;
+  end_date: string;
 }
 
 export interface ProjectResponse {

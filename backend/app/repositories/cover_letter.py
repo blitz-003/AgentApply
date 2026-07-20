@@ -51,5 +51,14 @@ class CoverLetterRepository:
         )
         return len(result.data) > 0
 
+    def update(self, cover_letter_id: str, content: str):
+        result = (
+            supabase_client.client.table("cover_letters")
+            .update({"content": content})
+            .eq("id", cover_letter_id)
+            .execute()
+        )
+        return result.data[0] if result.data else None
+
 
 cover_letter_repository = CoverLetterRepository()

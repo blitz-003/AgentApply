@@ -24,6 +24,7 @@ from app.schemas.ai import (
     SkillsResponse,
     SummaryResponse,
     SuggestSkillsRequest,
+    UpdateCoverLetterRequest,
 )
 from app.schemas.auth import UserResponse
 from app.services.resume_ai import resume_ai
@@ -243,3 +244,22 @@ async def delete_cover_letter(
     if not deleted:
         raise HTTPException(status_code=404, detail="Cover letter not found")
     return {"message": "Cover letter deleted"}
+
+
+@router.patch("/{resume_id}/ai/cover-letters/{cover_letter_id}", response_model=CoverLetterResponse)
+async def update_cover_letter(
+    resume_id: str,
+    cover_letter_id: str,
+    data: UpdateCoverLetterRequest,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    resume = resume_repository.get(resume_id, current_user.id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    cover_letter = cover_letter_repository.get(cover_letter_id)
+    if not cover_letter or cover_letter.get("resume_id") != resume_id:
+        raise HTTPException(status_code=404, detail="Cover letter not found")
+    updated = cover_letter_repository.update(cover_letter_id, data.content)
+    if not updated:
+        raise HTTPException(status_code=500, detail="Failed to update cover letter")
+    return updated

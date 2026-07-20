@@ -5,8 +5,37 @@ JSON_INSTRUCTIONS = (
     "Do not wrap the JSON in code blocks."
 )
 
+STAR_RULES = (
+    "Each bullet point must follow the STAR approach (Situation, Task, Action, Result). "
+    "Use strong action verbs and quantify achievements where possible. "
+    "Maximum 3 bullet points per section. Be concise and impactful."
+)
+
 
 class PromptBuilder:
+    def build_parse_resume_prompt(
+        self,
+        raw_text: str,
+    ) -> tuple[str, str]:
+        system_prompt = (
+            "You are an expert resume parser and career coach. "
+            "Given the raw text extracted from a resume, extract and structure all information "
+            "into our resume format. Correct any spelling or grammar errors. "
+            "Condense all descriptions to a maximum of 3 bullet points per section using the STAR approach "
+            "(Situation, Task, Action, Result). Use strong action verbs and quantify achievements. "
+            "If information is missing for a field, leave it as an empty string or empty list. "
+            f"{JSON_INSTRUCTIONS} "
+            "The response JSON must have exactly these keys: "
+            '"personal_info" (object with keys "name", "email", "phone", "location", "linkedin", "github"), '
+            '"summary" (string, 2-3 sentences), '
+            '"experience" (list of objects with keys "company", "position", "description", "start_date", "end_date"), '
+            '"education" (list of objects with keys "institution", "degree", "field", "start_date", "end_date"), '
+            '"skills" (list of strings), '
+            '"projects" (list of objects with keys "title", "description", "start_date", "end_date").'
+        )
+        user_prompt = f"Raw resume text:\n\n{raw_text}"
+        return system_prompt, user_prompt
+
     def build_generate_prompt(
         self,
         resume_data: dict,
@@ -25,6 +54,7 @@ class PromptBuilder:
             "You are an expert resume writer and career coach. "
             "Given the user's resume data and a target (job description or role), "
             "generate an optimized, ATS-friendly resume. "
+            f"{STAR_RULES} "
             "Also generate a tailored cover letter and ATS analysis. "
             f"{JSON_INSTRUCTIONS} "
             "The response JSON must have exactly these keys: "
@@ -93,7 +123,7 @@ class PromptBuilder:
         system_prompt = (
             "You are a professional resume writer. "
             "Improve the given professional summary to be more impactful, specific, and ATS-friendly. "
-            "Keep it concise (3-4 sentences). Maintain the original meaning but make it stronger. "
+            "Keep it concise (2-3 sentences). Maintain the original meaning but make it stronger. "
             f"{JSON_INSTRUCTIONS} "
             'The response JSON must have exactly one key: "summary".'
         )
@@ -131,9 +161,10 @@ class PromptBuilder:
             "Enhance the work experience entry by expanding the description with "
             "specific achievements, metrics, and action verbs. "
             "Maintain the company name and position. "
+            f"{STAR_RULES} "
             f"{JSON_INSTRUCTIONS} "
             'The response JSON must have exactly one key: "experience" with sub-keys '
-            '"company", "position", "description".'
+            '"company", "position", "description", "start_date", "end_date".'
         )
         user_prompt = (
             f"Resume context:\n{json.dumps(resume_context, indent=2)}\n\n"
@@ -149,10 +180,10 @@ class PromptBuilder:
         system_prompt = (
             "You are a professional resume writer. "
             "Improve the work experience description to be more impactful and results-oriented. "
-            "Use strong action verbs and quantify achievements where possible. "
+            f"{STAR_RULES} "
             f"{JSON_INSTRUCTIONS} "
             'The response JSON must have exactly one key: "experience" with sub-keys '
-            '"company", "position", "description".'
+            '"company", "position", "description", "start_date", "end_date".'
         )
         user_prompt = (
             f"Resume context:\n{json.dumps(resume_context, indent=2)}\n\n"
@@ -168,10 +199,11 @@ class PromptBuilder:
         system_prompt = (
             "You are a professional resume writer. "
             "Improve the project description to highlight technical skills, "
-            "impact, and key contributions. Make it compelling and specific. "
+            "impact, and key contributions. "
+            f"{STAR_RULES} "
             f"{JSON_INSTRUCTIONS} "
             'The response JSON must have exactly one key: "project" with sub-keys '
-            '"title", "description".'
+            '"title", "description", "start_date", "end_date".'
         )
         user_prompt = (
             f"Resume context:\n{json.dumps(resume_context, indent=2)}\n\n"
@@ -197,7 +229,6 @@ class PromptBuilder:
             f"Current skills: {json.dumps(skills)}"
         )
         return system_prompt, user_prompt
-
 
     def build_fill_fields_prompt(
         self,
@@ -225,6 +256,7 @@ class PromptBuilder:
             "For empty skills, suggest relevant technical and soft skills. "
             "For empty summary, write a compelling 2-3 sentence professional summary. "
             "For empty projects, generate relevant projects if applicable. "
+            f"{STAR_RULES} "
             f"{JSON_INSTRUCTIONS} "
             "The response JSON must have exactly one key: "
             '"resume_data" (the complete resume object with all fields filled).'

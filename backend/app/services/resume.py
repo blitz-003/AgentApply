@@ -13,7 +13,6 @@ from app.schemas.resume import (
     UpdateResumeRequest,
 )
 from app.services.pdf_service import pdf_service
-from app.services.resume_normalizer import resume_normalizer
 from app.services.resume_parser import resume_parser
 
 
@@ -66,6 +65,7 @@ class ResumeService:
             resume_data=result.get("resume_data", {}),
             ats_analysis=ats_analysis,
             cover_letter=latest_cover_letter,
+            target_role=result.get("resume_data", {}).get("personal_info", {}).get("target_role"),
         )
 
     def update_resume(
@@ -108,22 +108,13 @@ class ResumeService:
         if not result:
             return None
 
-        file_ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
-
-        if file_ext == "pdf":
-            raw_data = resume_parser.parse_pdf(file_content)
-        elif file_ext == "docx":
-            raw_data = resume_parser.parse_docx(file_content)
-        else:
-            raise ValueError("Unsupported file type. Please upload PDF or DOCX.")
-
-        normalized_data = resume_normalizer.normalize(raw_data)
+        raw_text = resume_parser.extract_raw_text(file_content, filename)
 
         resume_repository.update(
-            resume_id, user_id, {"resume_data": normalized_data.model_dump()}
+            resume_id, user_id, {"resume_data": {"raw_text": raw_text}}
         )
 
-        return {"resume_data": normalized_data.model_dump()}
+        return {"resume_data": {"raw_text": raw_text}}
 
     def export_resume(
         self, user_id: str, resume_id: str

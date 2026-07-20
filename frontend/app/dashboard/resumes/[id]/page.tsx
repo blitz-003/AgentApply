@@ -15,7 +15,7 @@ export default function ResumePage() {
     <ProtectedRoute>
       {isLoading ? (
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
+          <div className="h-16 w-16 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
         </div>
       ) : error ? (
         <div className="flex flex-1 items-center justify-center">
@@ -29,7 +29,7 @@ export default function ResumePage() {
             </button>
           </div>
         </div>
-      ) : resume?.resume_data && Object.keys(resume.resume_data).length > 0 ? (
+      ) : resume?.resume_data && Object.keys(resume.resume_data).length > 0 && !(Object.keys(resume.resume_data).length === 1 && "raw_text" in resume.resume_data) ? (
         <ResumeEditor resumeId={resumeId} resume={resume} />
       ) : (
         <GuidedFlow resumeId={resumeId} />

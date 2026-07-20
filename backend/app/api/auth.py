@@ -30,16 +30,16 @@ async def login(data: LoginRequest, response: Response):
         "access_token",
         access_token,
         httponly=True,
-        secure=not settings.supabase_url.startswith("http://localhost"),
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=3600,
     )
     response.set_cookie(
         "refresh_token",
         refresh_token,
         httponly=True,
-        secure=not settings.supabase_url.startswith("http://localhost"),
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=604800,
     )
     return result

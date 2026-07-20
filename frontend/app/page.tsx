@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useAuth } from "@/features/auth/auth-context";
 
 export default function Home() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="flex flex-1 flex-col">
       {/* Hero Section */}
@@ -18,16 +23,10 @@ export default function Home() {
         </p>
         <div className="mt-8 flex gap-4">
           <Link
-            href="/register"
+            href={isAuthenticated ? "/dashboard" : "/login"}
             className="rounded-lg bg-zinc-900 px-6 py-3 font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             Get Started
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-lg border border-zinc-300 px-6 py-3 font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Login
           </Link>
         </div>
       </section>
@@ -123,7 +122,7 @@ export default function Home() {
           Get started for free. No credit card required.
         </p>
         <Link
-          href="/register"
+          href={isAuthenticated ? "/dashboard" : "/login"}
           className="mt-6 inline-block rounded-lg bg-zinc-900 px-6 py-3 font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           Create Your Resume

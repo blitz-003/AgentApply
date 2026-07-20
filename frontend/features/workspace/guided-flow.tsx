@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useGenerateResume, useUpdateResume, useUploadResume, useFillFields } from "./hooks";
 import { useToast } from "@/components/toast-context";
 
@@ -8,7 +8,7 @@ interface GuidedFlowProps {
   resumeId: string;
 }
 
-type Step = "resume-source" | "target-job" | "uploading" | "analysis" | "summary";
+type Step = "resume-source" | "target-job" | "uploading" | "analysis";
 
 function hasEmptyFields(data: Record<string, unknown>): boolean {
   const pi = (data.personal_info as Record<string, unknown>) || {};
@@ -25,10 +25,6 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
   const [jobDescription, setJobDescription] = useState("");
   const [targetRole, setTargetRole] = useState("");
   const [hasJobDescription, setHasJobDescription] = useState<boolean | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<{
-    resume_data?: Record<string, unknown>;
-    ats_analysis?: { overall_score: number; strengths: string[]; weaknesses: string[]; recommendations: string[]; missing_keywords: string[] };
-  } | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,6 +33,26 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
   const uploadMutation = useUploadResume(resumeId);
   const fillFieldsMutation = useFillFields(resumeId);
   const { addToast } = useToast();
+
+  const [progressIndex, setProgressIndex] = useState(0);
+  const progressMessages = [
+    "Analyzing your experience...",
+    "Extracting keywords from the job description...",
+    "Optimizing content for ATS systems...",
+    "Generating tailored resume content...",
+    "Creating a personalized cover letter...",
+    "Running final ATS analysis...",
+    "Almost done...",
+  ];
+
+  useEffect(() => {
+    if (step !== "analysis") return;
+    setProgressIndex(0);
+    const interval = setInterval(() => {
+      setProgressIndex((prev) => (prev + 1) % progressMessages.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [step]);
 
   const getJobData = () => {
     const data: { job_description?: string; target_role?: string } = {};
@@ -52,9 +68,28 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
     setStep("analysis");
     generateMutation.mutate(jobData, {
       onSuccess: (result) => {
-        setAnalysisResult(result);
-        setStep("summary");
-        addToast("AI analysis completed", "success");
+        const resumeData = result.resume_data as Record<string, unknown>;
+        updateMutation.mutate(
+          { resume_data: resumeData },
+          {
+            onSuccess: () => {
+              addToast("Resume generated and saved", "success");
+              if (hasEmptyFields(resumeData || {})) {
+                fillFieldsMutation.mutate(jobData, {
+                  onSuccess: () => {
+                    addToast("Missing fields filled automatically", "success");
+                  },
+                  onError: () => {
+                    addToast("Some fields could not be auto-filled", "error");
+                  },
+                });
+              }
+            },
+            onError: () => {
+              addToast("Failed to save resume", "error");
+            },
+          }
+        );
       },
       onError: () => {
         setStep("resume-source");
@@ -65,13 +100,6 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
 
   const handleTargetJobSubmit = () => {
     handleGenerate(getJobData());
-  };
-
-  const handleSkipTarget = () => {
-    setHasJobDescription(null);
-    setJobDescription("");
-    setTargetRole("");
-    handleGenerate({});
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,34 +140,6 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
 
   const handleCreateFromScratch = () => {
     setStep("target-job");
-  };
-
-  const handleGenerateResume = () => {
-    if (analysisResult?.resume_data) {
-      updateMutation.mutate(
-        { resume_data: analysisResult.resume_data as Record<string, unknown> },
-        {
-          onSuccess: () => {
-            addToast("Tailored resume saved", "success");
-            if (hasEmptyFields(analysisResult.resume_data || {})) {
-              addToast("Filling in missing details...", "info");
-              fillFieldsMutation.mutate(getJobData(), {
-                onSuccess: (filledResult) => {
-                  setAnalysisResult((prev) => prev ? { ...prev, resume_data: filledResult.resume_data } : prev);
-                  addToast("Missing fields filled automatically", "success");
-                },
-                onError: () => {
-                  addToast("Could not auto-fill some fields", "error");
-                },
-              });
-            }
-          },
-          onError: () => {
-            addToast("Failed to save resume", "error");
-          },
-        }
-      );
-    }
   };
 
   if (step === "resume-source") {
@@ -204,13 +204,13 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
     return (
       <div className="flex flex-1 items-center justify-center p-8">
         <div className="w-full max-w-lg text-center space-y-6">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
+          <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
               Uploading your resume...
             </h2>
             <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              We&apos;re parsing and extracting content from your resume.
+              We&apos;re extracting content from your resume.
             </p>
           </div>
         </div>
@@ -298,13 +298,6 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
           )}
 
           <button
-            onClick={handleSkipTarget}
-            className="w-full text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
-          >
-            No target? Skip — generate general resume
-          </button>
-
-          <button
             onClick={() => setStep("resume-source")}
             className="w-full text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
           >
@@ -319,13 +312,13 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
     return (
       <div className="flex flex-1 items-center justify-center p-8">
         <div className="w-full max-w-lg text-center space-y-6">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
+          <div className="mx-auto h-20 w-20 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              AI is analyzing your resume...
+              AI is working its magic...
             </h2>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              This may take a moment. We&apos;re generating tailored content.
+            <p className="mt-3 text-sm font-medium text-zinc-600 dark:text-zinc-400 transition-opacity duration-300">
+              {progressMessages[progressIndex]}
             </p>
           </div>
           {generateMutation.isError && (
@@ -333,80 +326,6 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
               Something went wrong. Please try again.
             </p>
           )}
-        </div>
-      </div>
-    );
-  }
-
-  if (step === "summary" && analysisResult?.ats_analysis) {
-    const { ats_analysis } = analysisResult;
-    return (
-      <div className="flex flex-1 items-center justify-center p-8">
-        <div className="w-full max-w-2xl space-y-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              Analysis Complete
-            </h2>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              Here&apos;s what the AI found
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">ATS Score</span>
-              <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-                {ats_analysis.overall_score}/100
-              </span>
-            </div>
-          </div>
-
-          {ats_analysis.strengths.length > 0 && (
-            <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Strengths</h3>
-              <ul className="mt-2 space-y-1">
-                {ats_analysis.strengths.map((s, i) => (
-                  <li key={i} className="text-sm text-zinc-600 dark:text-zinc-400">+ {s}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {ats_analysis.missing_keywords.length > 0 && (
-            <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Missing Keywords</h3>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {ats_analysis.missing_keywords.map((kw, i) => (
-                  <span key={i} className="rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                    {kw}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {ats_analysis.recommendations.length > 0 && (
-            <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Recommendations</h3>
-              <ul className="mt-2 space-y-1">
-                {ats_analysis.recommendations.map((r, i) => (
-                  <li key={i} className="text-sm text-zinc-600 dark:text-zinc-400">• {r}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <button
-            onClick={handleGenerateResume}
-            disabled={updateMutation.isPending || fillFieldsMutation.isPending}
-            className="w-full rounded-lg bg-zinc-900 px-4 py-3 font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-          >
-            {updateMutation.isPending
-              ? "Saving..."
-              : fillFieldsMutation.isPending
-                ? "Filling in missing details..."
-                : "Generate Tailored Resume"}
-          </button>
         </div>
       </div>
     );

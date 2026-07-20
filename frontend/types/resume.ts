@@ -20,6 +20,7 @@ export interface ResumeDetail {
   resume_data: Record<string, unknown>;
   ats_analysis: Record<string, unknown> | null;
   cover_letter: Record<string, unknown> | null;
+  target_role: string | null;
 }
 
 export interface CreateResumeRequest {
@@ -44,11 +45,15 @@ export interface ExperienceEntry {
   company: string;
   position: string;
   description: string;
+  start_date: string;
+  end_date: string;
 }
 
 export interface ProjectEntry {
   title: string;
   description: string;
+  start_date: string;
+  end_date: string;
 }
 
 export interface EducationEntry {

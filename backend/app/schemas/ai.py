@@ -29,6 +29,8 @@ class ExperienceInput(BaseModel):
     company: str
     position: str
     description: str
+    start_date: str = ""
+    end_date: str = ""
 
 
 class GenerateExperienceRequest(BaseModel):
@@ -42,6 +44,8 @@ class ImproveExperienceRequest(BaseModel):
 class ProjectInput(BaseModel):
     title: str
     description: str
+    start_date: str = ""
+    end_date: str = ""
 
 
 class ImproveProjectRequest(BaseModel):
@@ -104,3 +108,7 @@ class FillFieldsRequest(BaseModel):
 
 class FillFieldsResponse(BaseModel):
     resume_data: dict
+
+
+class UpdateCoverLetterRequest(BaseModel):
+    content: str

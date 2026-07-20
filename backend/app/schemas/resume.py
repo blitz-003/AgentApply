@@ -30,11 +30,15 @@ class ExperienceEntry(BaseModel):
     company: str = ""
     position: str = ""
     description: str = ""
+    start_date: str = ""
+    end_date: str = ""
 
 
 class ProjectEntry(BaseModel):
     title: str = ""
     description: str = ""
+    start_date: str = ""
+    end_date: str = ""
 
 
 class EducationEntry(BaseModel):
@@ -79,6 +83,7 @@ class ResumeDetailResponse(BaseModel):
     resume_data: dict
     ats_analysis: dict | None = None
     cover_letter: dict | None = None
+    target_role: str | None = None
 
 
 class ResumeCreateResponse(BaseModel):

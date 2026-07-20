@@ -4,9 +4,11 @@ import { useAtsAnalysis } from "./hooks";
 
 interface ATSAnalysisPanelProps {
   resumeId: string;
+  onSaveAndAnalyze: () => void;
+  isAnalyzing: boolean;
 }
 
-export function ATSAnalysisPanel({ resumeId }: ATSAnalysisPanelProps) {
+export function ATSAnalysisPanel({ resumeId, onSaveAndAnalyze, isAnalyzing }: ATSAnalysisPanelProps) {
   const { data: analysis, isLoading, isError } = useAtsAnalysis(resumeId);
 
   if (isLoading) {
@@ -32,13 +34,50 @@ export function ATSAnalysisPanel({ resumeId }: ATSAnalysisPanelProps) {
     );
   }
 
+  if (isAnalyzing) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="flex items-center gap-3">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
+            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+              Running ATS analysis...
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-500">
+            AI is analyzing your resume. This may take a moment.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!analysis) {
-    return null;
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+          No ATS analysis yet.
+        </p>
+        <button
+          onClick={onSaveAndAnalyze}
+          className="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+        >
+          Save &amp; Run Analysis
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+      <button
+        onClick={onSaveAndAnalyze}
+        className="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+      >
+        Analyze Again
+      </button>
+
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-950">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
             ATS Match Score

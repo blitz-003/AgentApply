@@ -42,66 +42,54 @@ export function useAtsAnalysis(resumeId: string) {
   });
 }
 
-export function useImproveSummary(resumeId: string) {
+export function useTriggerAtsAnalysis(resumeId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (summary: string) => aiApi.improveSummary(resumeId, summary),
+    mutationFn: (data: { job_description?: string; target_role?: string }) =>
+      aiApi.atsAnalysis(resumeId, data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["atsAnalysis", resumeId] });
       queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
     },
+  });
+}
+
+export function useImproveSummary(resumeId: string) {
+  return useMutation({
+    mutationFn: (summary: string) => aiApi.improveSummary(resumeId, summary),
   });
 }
 
 export function useRewriteSummary(resumeId: string) {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (summary: string) => aiApi.rewriteSummary(resumeId, summary),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
-    },
   });
 }
 
 export function useGenerateExperience(resumeId: string) {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (experience: { company: string; position: string; description: string }) =>
       aiApi.generateExperience(resumeId, experience),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
-    },
   });
 }
 
 export function useImproveExperience(resumeId: string) {
-  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (experience: { company: string; position: string; description: string }) =>
+    mutationFn: (experience: { company: string; position: string; description: string; start_date: string; end_date: string }) =>
       aiApi.improveExperience(resumeId, experience),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
-    },
   });
 }
 
 export function useImproveProject(resumeId: string) {
-  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (project: { title: string; description: string }) =>
+    mutationFn: (project: { title: string; description: string; start_date: string; end_date: string }) =>
       aiApi.improveProject(resumeId, project),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
-    },
   });
 }
 
 export function useSuggestSkills(resumeId: string) {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (skills: string[]) => aiApi.suggestSkills(resumeId, skills),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
-    },
   });
 }
 
@@ -117,6 +105,17 @@ export function useDeleteCoverLetter(resumeId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (coverLetterId: string) => aiApi.deleteCoverLetter(resumeId, coverLetterId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["coverLetters", resumeId] });
+    },
+  });
+}
+
+export function useUpdateCoverLetter(resumeId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ coverLetterId, content }: { coverLetterId: string; content: string }) =>
+      aiApi.updateCoverLetter(resumeId, coverLetterId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["coverLetters", resumeId] });
     },

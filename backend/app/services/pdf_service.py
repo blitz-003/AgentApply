@@ -102,6 +102,11 @@ class PDFService:
             color: #4b5563;
             margin-top: 5px;
         }}
+        .item-dates {{
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }}
         .skills-list {{
             display: flex;
             flex-wrap: wrap;
@@ -160,12 +165,18 @@ class PDFService:
 
         items = ""
         for exp in experience:
+            date_range = ""
+            start = exp.get('start_date', '')
+            end = exp.get('end_date', '')
+            if start or end:
+                date_range = f'<div class="item-dates">{html.escape(start)}{(" - " + html.escape(end)) if start and end else (" - " + html.escape(end) if end else "")}</div>'
             items += f"""
         <div class="experience-item">
             <div class="item-header">
                 <span class="item-title">{html.escape(exp.get('position', 'Position'))}</span>
                 <span class="item-subtitle">{html.escape(exp.get('company', 'Company'))}</span>
             </div>
+            {date_range}
             <p class="item-description">{html.escape(exp.get('description', ''))}</p>
         </div>"""
 
@@ -217,11 +228,17 @@ class PDFService:
 
         items = ""
         for project in projects:
+            date_range = ""
+            start = project.get('start_date', '')
+            end = project.get('end_date', '')
+            if start or end:
+                date_range = f'<div class="item-dates">{html.escape(start)}{(" - " + html.escape(end)) if start and end else (" - " + html.escape(end) if end else "")}</div>'
             items += f"""
         <div class="project-item">
             <div class="item-header">
                 <span class="item-title">{html.escape(project.get('title', 'Project'))}</span>
             </div>
+            {date_range}
             <p class="item-description">{html.escape(project.get('description', ''))}</p>
         </div>"""
 

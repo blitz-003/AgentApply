@@ -16,6 +16,8 @@ from app.schemas.ai import (
     SkillsResponse,
     SummaryResponse,
 )
+from app.schemas.resume import ResumeData
+from app.services.resume_normalizer import resume_normalizer
 
 
 class ResumeAIOrchestrator:
@@ -33,6 +35,15 @@ class ResumeAIOrchestrator:
                 "Provide either job_description or target_role, not both"
             )
 
+    def parse_and_normalize(self, raw_text: str) -> ResumeData:
+        system_prompt, user_prompt = prompt_builder.build_parse_resume_prompt(
+            raw_text
+        )
+        raw_response = llm_client.chat(system_prompt, user_prompt)
+        parsed = response_parser.parse_json(raw_response)
+
+        return resume_normalizer.normalize(parsed)
+
     def generate(
         self,
         user_id: str,
@@ -43,6 +54,11 @@ class ResumeAIOrchestrator:
         self._validate_job_target(job_description, target_role)
         resume = self._get_resume_data(user_id, resume_id)
         resume_data = resume.get("resume_data", {})
+
+        raw_text = resume_data.get("raw_text", "")
+        if raw_text:
+            parsed_data = self.parse_and_normalize(raw_text)
+            resume_data = parsed_data.model_dump()
 
         system_prompt, user_prompt = prompt_builder.build_generate_prompt(
             resume_data, job_description, target_role

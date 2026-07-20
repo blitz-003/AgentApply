@@ -30,6 +30,9 @@ export const aiApi = {
   deleteCoverLetter: (resumeId: string, coverLetterId: string) =>
     api.delete(`/resumes/${resumeId}/ai/cover-letters/${coverLetterId}`),
 
+  updateCoverLetter: (resumeId: string, coverLetterId: string, content: string) =>
+    api.patch<CoverLetterResponse>(`/resumes/${resumeId}/ai/cover-letters/${coverLetterId}`, { content }),
+
   improveSummary: (resumeId: string, summary: string) =>
     api.post<SummaryResponse>(`/resumes/${resumeId}/ai/improve-summary`, { summary }),
 

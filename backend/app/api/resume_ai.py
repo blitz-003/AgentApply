@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import get_current_user
 from app.repositories.ats_analysis import ats_analysis_repository
 from app.repositories.cover_letter import cover_letter_repository
+from app.repositories.resume import resume_repository
 from app.schemas.ai import (
     ATSAnalysisRequest,
     ATSAnalysisResponse,
@@ -10,6 +11,8 @@ from app.schemas.ai import (
     CoverLetterRequest,
     CoverLetterResponse,
     ExperienceResponse,
+    FillFieldsRequest,
+    FillFieldsResponse,
     GenerateExperienceRequest,
     GenerateRequest,
     GenerateResponse,
@@ -178,6 +181,24 @@ async def suggest_skills(
         raise HTTPException(status_code=500, detail="Skills suggestion failed")
 
 
+@router.post(
+    "/{resume_id}/ai/fill-fields", response_model=FillFieldsResponse
+)
+async def fill_fields(
+    resume_id: str,
+    data: FillFieldsRequest,
+    current_user: UserResponse = Depends(get_current_user),
+):
+    try:
+        return resume_ai.fill_fields(
+            current_user.id, resume_id, data.job_description, data.target_role
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Field filling failed")
+
+
 @router.get(
     "/{resume_id}/ai/ats-analysis", response_model=ATSAnalysisResponse | None
 )
@@ -185,6 +206,9 @@ async def get_ats_analysis(
     resume_id: str,
     current_user: UserResponse = Depends(get_current_user),
 ):
+    resume = resume_repository.get(resume_id, current_user.id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
     analysis = ats_analysis_repository.get_by_resume(resume_id)
     return analysis
 
@@ -196,6 +220,9 @@ async def list_cover_letters(
     resume_id: str,
     current_user: UserResponse = Depends(get_current_user),
 ):
+    resume = resume_repository.get(resume_id, current_user.id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
     cover_letters = cover_letter_repository.list_by_resume(resume_id)
     return CoverLetterListResponse(items=cover_letters)
 
@@ -206,6 +233,12 @@ async def delete_cover_letter(
     cover_letter_id: str,
     current_user: UserResponse = Depends(get_current_user),
 ):
+    resume = resume_repository.get(resume_id, current_user.id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    cover_letter = cover_letter_repository.get(cover_letter_id)
+    if not cover_letter or cover_letter.get("resume_id") != resume_id:
+        raise HTTPException(status_code=404, detail="Cover letter not found")
     deleted = cover_letter_repository.delete(cover_letter_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Cover letter not found")

@@ -1,3 +1,5 @@
+import json
+
 JSON_INSTRUCTIONS = (
     "Return ONLY valid JSON with no extra text, markdown, or explanation. "
     "Do not wrap the JSON in code blocks."
@@ -194,6 +196,40 @@ class PromptBuilder:
             f"Resume context:\n{json.dumps(resume_context, indent=2)}\n\n"
             f"Current skills: {json.dumps(skills)}"
         )
+        return system_prompt, user_prompt
+
+
+    def build_fill_fields_prompt(
+        self,
+        resume_data: dict,
+        job_description: str | None,
+        target_role: str | None,
+    ) -> tuple[str, str]:
+        context = f"Current resume data:\n{json.dumps(resume_data, indent=2)}"
+
+        target = ""
+        if job_description:
+            target = f"Job Description:\n{job_description}"
+        elif target_role:
+            target = f"Target Role: {target_role}"
+        else:
+            target = "Generate a general professional resume."
+
+        system_prompt = (
+            "You are an expert resume writer. "
+            "The user has a partially filled resume. "
+            "Fill in ONLY the empty or missing fields with relevant, professional content. "
+            "Do NOT modify any fields that already have content — preserve them exactly. "
+            "For empty experience entries, generate realistic professional experience based on the target role. "
+            "For empty education entries, generate appropriate education. "
+            "For empty skills, suggest relevant technical and soft skills. "
+            "For empty summary, write a compelling 2-3 sentence professional summary. "
+            "For empty projects, generate relevant projects if applicable. "
+            f"{JSON_INSTRUCTIONS} "
+            "The response JSON must have exactly one key: "
+            '"resume_data" (the complete resume object with all fields filled).'
+        )
+        user_prompt = f"{context}\n\n{target}"
         return system_prompt, user_prompt
 
 

@@ -8,7 +8,17 @@ from app.config import settings
 class LLMClient:
     @cached_property
     def client(self) -> OpenAI:
-        return OpenAI(api_key=settings.openai_api_key)
+        default_headers = {}
+        if "openrouter.ai" in settings.ai_base_url:
+            default_headers["HTTP-Referer"] = settings.ai_app_url
+            default_headers["X-OpenRouter-Title"] = settings.ai_app_name
+        return OpenAI(
+            base_url=settings.ai_base_url,
+            api_key=settings.ai_api_key,
+            timeout=60.0,
+            max_retries=2,
+            default_headers=default_headers or None,
+        )
 
     def chat(
         self,
@@ -21,7 +31,7 @@ class LLMClient:
             {"role": "user", "content": user_prompt},
         ]
         kwargs = {
-            "model": "gpt-4o-mini",
+            "model": settings.ai_model,
             "messages": messages,
             "temperature": 0.7,
         }

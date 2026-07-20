@@ -52,6 +52,9 @@ class ResumeData(BaseModel):
     projects: list[ProjectEntry] = []
     skills: list[str] = []
     education: list[EducationEntry] = []
+    certifications: list[dict] = []
+    languages: list[dict] = []
+    achievements: list[str] = []
 
 
 class ResumeListResponse(BaseModel):

@@ -1,3 +1,5 @@
+from app.repositories.ats_analysis import ats_analysis_repository
+from app.repositories.cover_letter import cover_letter_repository
 from app.repositories.resume import resume_repository
 from app.repositories.template import template_repository
 from app.schemas.resume import (
@@ -54,13 +56,16 @@ class ResumeService:
         result = resume_repository.get(resume_id, user_id)
         if not result:
             return None
+        ats_analysis = ats_analysis_repository.get_by_resume(resume_id)
+        cover_letters = cover_letter_repository.list_by_resume(resume_id)
+        latest_cover_letter = cover_letters[0] if cover_letters else None
         return ResumeDetailResponse(
             id=result["id"],
             title=result["title"],
             template_id=result.get("template_id"),
             resume_data=result.get("resume_data", {}),
-            ats_analysis=result.get("ats_analysis"),
-            cover_letter=result.get("cover_letter"),
+            ats_analysis=ats_analysis,
+            cover_letter=latest_cover_letter,
         )
 
     def update_resume(
@@ -118,7 +123,7 @@ class ResumeService:
             resume_id, user_id, {"resume_data": normalized_data.model_dump()}
         )
 
-        return normalized_data
+        return {"resume_data": normalized_data.model_dump()}
 
     def export_resume(
         self, user_id: str, resume_id: str

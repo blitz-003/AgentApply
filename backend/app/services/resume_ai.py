@@ -9,6 +9,7 @@ from app.schemas.ai import (
     CoverLetterResponse,
     ExperienceInput,
     ExperienceResponse,
+    FillFieldsResponse,
     GenerateResponse,
     ProjectInput,
     ProjectResponse,
@@ -27,10 +28,6 @@ class ResumeAIOrchestrator:
     def _validate_job_target(
         self, job_description: str | None, target_role: str | None
     ):
-        if not job_description and not target_role:
-            raise ValueError(
-                "Either job_description or target_role must be provided"
-            )
         if job_description and target_role:
             raise ValueError(
                 "Provide either job_description or target_role, not both"
@@ -250,6 +247,30 @@ class ResumeAIOrchestrator:
         parsed = response_parser.parse_json(raw_response)
 
         return SkillsResponse(skills=parsed.get("skills", []))
+
+    def fill_fields(
+        self,
+        user_id: str,
+        resume_id: str,
+        job_description: str | None,
+        target_role: str | None,
+    ) -> FillFieldsResponse:
+        resume = self._get_resume_data(user_id, resume_id)
+        resume_data = resume.get("resume_data", {})
+
+        system_prompt, user_prompt = prompt_builder.build_fill_fields_prompt(
+            resume_data, job_description, target_role
+        )
+        raw_response = llm_client.chat(system_prompt, user_prompt)
+        parsed = response_parser.parse_json(raw_response)
+
+        filled_data = parsed.get("resume_data", resume_data)
+
+        resume_repository.update(
+            resume_id, user_id, {"resume_data": filled_data}
+        )
+
+        return FillFieldsResponse(resume_data=filled_data)
 
 
 resume_ai = ResumeAIOrchestrator()

@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { resumeApi } from "@/lib/api/resume";
 import { aiApi } from "@/lib/api/ai";
+import { downloadAll, generateResumePDF } from "@/lib/pdf/generate-pdf";
 
 export function useResumeDetail(resumeId: string) {
   return useQuery({
@@ -29,26 +30,6 @@ export function useGenerateResume(resumeId: string) {
     mutationFn: (data: { job_description?: string; target_role?: string }) =>
       aiApi.generate(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
-    },
-  });
-}
-
-export function useAtsAnalysis(resumeId: string) {
-  return useQuery({
-    queryKey: ["atsAnalysis", resumeId],
-    queryFn: () => aiApi.getAtsAnalysis(resumeId),
-    enabled: !!resumeId,
-  });
-}
-
-export function useTriggerAtsAnalysis(resumeId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: { job_description?: string; target_role?: string }) =>
-      aiApi.atsAnalysis(resumeId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["atsAnalysis", resumeId] });
       queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
     },
   });
@@ -93,35 +74,6 @@ export function useSuggestSkills(resumeId: string) {
   });
 }
 
-export function useCoverLetters(resumeId: string) {
-  return useQuery({
-    queryKey: ["coverLetters", resumeId],
-    queryFn: () => aiApi.listCoverLetters(resumeId),
-    enabled: !!resumeId,
-  });
-}
-
-export function useDeleteCoverLetter(resumeId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (coverLetterId: string) => aiApi.deleteCoverLetter(resumeId, coverLetterId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["coverLetters", resumeId] });
-    },
-  });
-}
-
-export function useUpdateCoverLetter(resumeId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ coverLetterId, content }: { coverLetterId: string; content: string }) =>
-      aiApi.updateCoverLetter(resumeId, coverLetterId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["coverLetters", resumeId] });
-    },
-  });
-}
-
 export function useUploadResume(resumeId: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -135,26 +87,19 @@ export function useUploadResume(resumeId: string) {
 export function useExportResume() {
   return useMutation({
     mutationFn: async (resumeId: string) => {
-      const blob = await resumeApi.export(resumeId);
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "resume.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    },
-  });
-}
-
-export function useFillFields(resumeId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: { job_description?: string; target_role?: string }) =>
-      aiApi.fillFields(resumeId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resume", resumeId] });
+      const detail = await resumeApi.get(resumeId);
+      const resumeData = detail.resume_data as Record<string, unknown>;
+      const coverContent =
+        ((detail.cover_letter as Record<string, unknown> | null)
+          ?.content as string) || "";
+      const name =
+        (resumeData.personal_info as Record<string, string> | undefined)
+          ?.name || detail.title || "Resume";
+      if (coverContent) {
+        await downloadAll(resumeData, coverContent, name);
+      } else {
+        await generateResumePDF(resumeData, `${name}_Resume.pdf`);
+      }
     },
   });
 }

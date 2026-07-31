@@ -1,23 +1,21 @@
+import logging
 from functools import cached_property
 
 from openai import OpenAI
 
 from app.config import settings
 
+logger = logging.getLogger(__name__)
+
 
 class LLMClient:
     @cached_property
     def client(self) -> OpenAI:
-        default_headers = {}
-        if "openrouter.ai" in settings.ai_base_url:
-            default_headers["HTTP-Referer"] = settings.ai_app_url
-            default_headers["X-OpenRouter-Title"] = settings.ai_app_name
         return OpenAI(
             base_url=settings.ai_base_url,
             api_key=settings.ai_api_key,
             timeout=60.0,
             max_retries=2,
-            default_headers=default_headers or None,
         )
 
     def chat(
@@ -37,8 +35,14 @@ class LLMClient:
         }
         if response_format:
             kwargs["response_format"] = response_format
-        response = self.client.chat.completions.create(**kwargs)
-        return response.choices[0].message.content
+        try:
+            response = self.client.chat.completions.create(**kwargs)
+            content = response.choices[0].message.content
+            logger.debug(f"LLM response (first 200 chars): {content[:200] if content else 'None'}")
+            return content
+        except Exception as e:
+            logger.error(f"LLM API error: {type(e).__name__}: {e}")
+            raise
 
 
 llm_client = LLMClient()

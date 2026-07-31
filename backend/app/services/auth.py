@@ -21,7 +21,10 @@ class AuthService:
         )
 
     def login(self, data: LoginRequest) -> tuple[AuthResponse, str, str]:
-        result = supabase_client.sign_in(data.email, data.password)
+        try:
+            result = supabase_client.sign_in(data.email, data.password)
+        except Exception:
+            raise ValueError("Invalid email or password.")
         if not result.user or not result.session:
             raise ValueError("Invalid email or password.")
         session = result.session

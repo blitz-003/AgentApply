@@ -5,9 +5,9 @@ class Settings(BaseSettings):
     supabase_url: str = ""
     supabase_key: str = ""
     supabase_anon_key: str = ""
-    ai_base_url: str = "https://openrouter.ai/api/v1"
+    ai_base_url: str = "https://api.groq.com/openai/v1"
     ai_api_key: str = ""
-    ai_model: str = "openrouter/free"
+    ai_model: str = "llama-3.3-70b-versatile"
     ai_app_name: str = "Agent Apply"
     ai_app_url: str = "http://localhost:3000"
     allowed_origins: list[str] = ["http://localhost:3000"]

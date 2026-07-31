@@ -8,13 +8,8 @@ import {
   useImproveExperience,
   useImproveProject,
   useSuggestSkills,
-  useTriggerAtsAnalysis,
 } from "./hooks";
-import { ATSAnalysisPanel } from "./ats-analysis-panel";
-import { CoverLettersPanel } from "./cover-letters-panel";
 import { useToast } from "@/components/toast-context";
-import { generateResumePDF, generateCoverLetterPDFs } from "@/lib/pdf/generate-pdf";
-import { aiApi } from "@/lib/api/ai";
 
 interface ResumeEditorProps {
   resumeId: string;
@@ -132,13 +127,14 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const [skills, setSkills] = useState<string[]>(() => getSkills(resumeData));
   const [education, setEducation] = useState<EducationEntry[]>(() => getEducation(resumeData));
   const [newSkill, setNewSkill] = useState("");
+  const [improvingExpIndex, setImprovingExpIndex] = useState<number | null>(null);
+  const [improvingProjIndex, setImprovingProjIndex] = useState<number | null>(null);
 
   const updateMutation = useUpdateResume(resumeId);
   const improveSummaryMutation = useImproveSummary(resumeId);
   const improveExperienceMutation = useImproveExperience(resumeId);
   const improveProjectMutation = useImproveProject(resumeId);
   const suggestSkillsMutation = useSuggestSkills(resumeId);
-  const triggerAtsAnalysisMutation = useTriggerAtsAnalysis(resumeId);
   const { addToast } = useToast();
 
   const buildResumeData = useCallback((): Record<string, unknown> => ({
@@ -160,23 +156,6 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
     );
   };
 
-  const handleSaveAndAnalyze = async () => {
-    try {
-      await updateMutation.mutateAsync({ resume_data: buildResumeData() });
-      addToast("Resume saved", "success");
-      const targetRole = resume.target_role || undefined;
-      triggerAtsAnalysisMutation.mutate(
-        { target_role: targetRole },
-        {
-          onSuccess: () => addToast("ATS analysis completed", "success"),
-          onError: () => addToast("ATS analysis failed", "error"),
-        }
-      );
-    } catch {
-      addToast("Failed to save resume before analysis", "error");
-    }
-  };
-
   const handleImproveSummary = () => {
     improveSummaryMutation.mutate(summary, {
       onSuccess: (result) => setSummary(result.summary),
@@ -185,6 +164,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   };
 
   const handleImproveExperience = (index: number) => {
+    setImprovingExpIndex(index);
     const entry = experience[index];
     improveExperienceMutation.mutate(entry, {
       onSuccess: (result) => {
@@ -193,10 +173,12 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
         );
       },
       onError: () => addToast("AI request failed", "error"),
+      onSettled: () => setImprovingExpIndex(null),
     });
   };
 
   const handleImproveProject = (index: number) => {
+    setImprovingProjIndex(index);
     const entry = projects[index];
     improveProjectMutation.mutate(entry, {
       onSuccess: (result) => {
@@ -205,6 +187,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
         );
       },
       onError: () => addToast("AI request failed", "error"),
+      onSettled: () => setImprovingProjIndex(null),
     });
   };
 
@@ -254,26 +237,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
     setEducation((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const [isExporting, setIsExporting] = useState(false);
 
-  const handleDownloadPDF = useCallback(async () => {
-    setIsExporting(true);
-    try {
-      const coverLetters = await aiApi.listCoverLetters(resumeId);
-      const name = (resumeData.personal_info as Record<string, string>)?.name || resume.title;
-      await generateResumePDF(
-        resumeData as Record<string, unknown>,
-        `${name}_Resume.pdf`
-      );
-      if (coverLetters.items.length > 0) {
-        await generateCoverLetterPDFs(coverLetters.items, name);
-      }
-    } catch (err) {
-      console.error("PDF generation failed:", err);
-    } finally {
-      setIsExporting(false);
-    }
-  }, [resumeId, resumeData, resume.title]);
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -286,20 +250,6 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
               {resume.title}
             </h1>
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleDownloadPDF}
-                disabled={isExporting}
-                className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-              >
-                {isExporting ? (
-                  <span className="flex items-center gap-2">
-                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-600" />
-                    Generating...
-                  </span>
-                ) : (
-                  "Download PDF"
-                )}
-              </button>
               <button
                 onClick={handleSave}
                 disabled={updateMutation.isPending}
@@ -484,10 +434,10 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                     />
                     <button
                       onClick={() => handleImproveExperience(index)}
-                      disabled={improveExperienceMutation.isPending}
+                      disabled={improvingExpIndex !== null}
                       className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
                     >
-                      {improveExperienceMutation.isPending ? "Improving..." : "Improve with AI"}
+                      {improvingExpIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
                   </div>
                 ))}
@@ -584,10 +534,10 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                     />
                     <button
                       onClick={() => handleImproveProject(index)}
-                      disabled={improveProjectMutation.isPending}
+                      disabled={improvingProjIndex !== null}
                       className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
                     >
-                      {improveProjectMutation.isPending ? "Improving..." : "Improve with AI"}
+                      {improvingProjIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
                   </div>
                 ))}
@@ -753,24 +703,8 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
               </div>
             </section>
 
-            {/* Saved Cover Letters */}
-            <CoverLettersPanel resumeId={resumeId} />
           </div>
         </div>
-
-        {/* ATS Sidebar */}
-        <div className="hidden w-1/4 border-l border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900 lg:block">
-          <div className="sticky top-16">
-            <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-              ATS Analysis
-            </h3>
-            <ATSAnalysisPanel
-              resumeId={resumeId}
-              onSaveAndAnalyze={handleSaveAndAnalyze}
-              isAnalyzing={triggerAtsAnalysisMutation.isPending}
-            />
-          </div>
-        </div>
-      </div>
+    </div>
   );
 }

@@ -6,17 +6,6 @@ class GenerateRequest(BaseModel):
     target_role: str | None = None
 
 
-class ATSAnalysisRequest(BaseModel):
-    job_description: str | None = None
-    target_role: str | None = None
-
-
-class CoverLetterRequest(BaseModel):
-    company_name: str
-    job_title: str
-    job_description: str
-
-
 class ImproveSummaryRequest(BaseModel):
     summary: str
 
@@ -62,29 +51,6 @@ class GenerateResponse(BaseModel):
     ats_analysis: dict
 
 
-class ATSAnalysisResponse(BaseModel):
-    id: str | None = None
-    resume_id: str | None = None
-    overall_score: int
-    strengths: list[str]
-    weaknesses: list[str]
-    recommendations: list[str]
-    missing_keywords: list[str]
-    analyzed_at: str | None = None
-
-
-class CoverLetterResponse(BaseModel):
-    id: str
-    company_name: str
-    job_title: str
-    content: str
-    created_at: str | None = None
-
-
-class CoverLetterListResponse(BaseModel):
-    items: list[CoverLetterResponse]
-
-
 class SummaryResponse(BaseModel):
     summary: str
 
@@ -101,14 +67,4 @@ class SkillsResponse(BaseModel):
     skills: list[str]
 
 
-class FillFieldsRequest(BaseModel):
-    job_description: str | None = None
-    target_role: str | None = None
 
-
-class FillFieldsResponse(BaseModel):
-    resume_data: dict
-
-
-class UpdateCoverLetterRequest(BaseModel):
-    content: str

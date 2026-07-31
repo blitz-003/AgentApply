@@ -1,11 +1,13 @@
 export interface ATSAnalysis {
   id?: string;
   resume_id?: string;
+  previous_score?: number;
   overall_score: number;
   strengths: string[];
   weaknesses: string[];
   recommendations: string[];
   missing_keywords: string[];
+  included_keywords?: string[];
   analyzed_at?: string;
 }
 

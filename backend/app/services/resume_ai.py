@@ -1,3 +1,6 @@
+import json
+import logging
+
 from app.infrastructure.llm_client import llm_client
 from app.infrastructure.prompt_builder import prompt_builder
 from app.infrastructure.response_parser import response_parser
@@ -5,19 +8,16 @@ from app.repositories.ats_analysis import ats_analysis_repository
 from app.repositories.cover_letter import cover_letter_repository
 from app.repositories.resume import resume_repository
 from app.schemas.ai import (
-    ATSAnalysisResponse,
-    CoverLetterResponse,
     ExperienceInput,
     ExperienceResponse,
-    FillFieldsResponse,
     GenerateResponse,
     ProjectInput,
     ProjectResponse,
     SkillsResponse,
     SummaryResponse,
 )
-from app.schemas.resume import ResumeData
-from app.services.resume_normalizer import resume_normalizer
+
+logger = logging.getLogger(__name__)
 
 
 class ResumeAIOrchestrator:
@@ -35,15 +35,6 @@ class ResumeAIOrchestrator:
                 "Provide either job_description or target_role, not both"
             )
 
-    def parse_and_normalize(self, raw_text: str) -> ResumeData:
-        system_prompt, user_prompt = prompt_builder.build_parse_resume_prompt(
-            raw_text
-        )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
-        parsed = response_parser.parse_json(raw_response)
-
-        return resume_normalizer.normalize(parsed)
-
     def generate(
         self,
         user_id: str,
@@ -54,98 +45,81 @@ class ResumeAIOrchestrator:
         self._validate_job_target(job_description, target_role)
         resume = self._get_resume_data(user_id, resume_id)
         resume_data = resume.get("resume_data", {})
-
         raw_text = resume_data.get("raw_text", "")
-        if raw_text:
-            parsed_data = self.parse_and_normalize(raw_text)
-            resume_data = parsed_data.model_dump()
 
         system_prompt, user_prompt = prompt_builder.build_generate_prompt(
-            resume_data, job_description, target_role
+            resume_data, job_description, target_role, raw_text=raw_text or None
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
 
+        keywords = parsed.get("keywords_extracted", [])
+        keyword_categories = parsed.get("keyword_categories", {}) or {}
         generated_resume_data = parsed.get("resume_data", {})
+        ats = parsed.get("ats_analysis", {}) or {}
+
+        if keywords and generated_resume_data:
+            resume_text = json.dumps(generated_resume_data).lower()
+            missing_from_resume = []
+            for kw in keywords:
+                if kw.lower() not in resume_text:
+                    missing_from_resume.append(kw)
+
+            if missing_from_resume:
+                skills = generated_resume_data.get("skills", [])
+                if not isinstance(skills, list):
+                    skills = []
+                for kw in missing_from_resume:
+                    category = keyword_categories.get(kw, "Others")
+                    found = False
+                    for skill_group in skills:
+                        if isinstance(skill_group, dict) and skill_group.get("category", "").lower() == category.lower():
+                            skill_group.setdefault("items", []).append(kw)
+                            found = True
+                            break
+                    if not found:
+                        skills.append({"category": category, "items": [kw]})
+                generated_resume_data["skills"] = skills
+
+            final_resume_text = json.dumps(generated_resume_data).lower()
+            still_missing = []
+            for kw in keywords:
+                if kw.lower() not in final_resume_text:
+                    still_missing.append(kw)
+
+            ats["included_keywords"] = [kw for kw in missing_from_resume if kw.lower() in final_resume_text.lower()]
+            ats["missing_keywords"] = still_missing
+            covered = len(keywords) - len(still_missing)
+            ats["overall_score"] = round(covered / len(keywords) * 100) if keywords else 100
+
         resume_repository.update(
             resume_id, user_id, {"resume_data": generated_resume_data}
         )
 
-        ats_analysis_data = parsed.get("ats_analysis", {})
-        ats_analysis_repository.upsert(resume_id, ats_analysis_data)
+        ats_analysis_data = ats
+        if ats_analysis_data:
+            ats_analysis_repository.upsert(resume_id, ats_analysis_data)
 
-        cover_letter_data = parsed.get("cover_letter", {})
-        content = cover_letter_data.get("content", "")
-        if content:
+        cover_letter_data = parsed.get("cover_letter", {}) or {}
+        cover_content = (
+            cover_letter_data.get("content", "")
+            if isinstance(cover_letter_data, dict)
+            else ""
+        )
+        if cover_content:
+            for existing in cover_letter_repository.list_by_resume(resume_id):
+                cover_letter_repository.delete(existing["id"])
             cover_letter_repository.create(
                 resume_id,
-                cover_letter_data.get("company_name", ""),
-                cover_letter_data.get("job_title", ""),
-                content,
+                company_name="",
+                job_title=target_role or "",
+                content=cover_content,
             )
 
         return GenerateResponse(
             resume_data=generated_resume_data,
             cover_letter=cover_letter_data,
             ats_analysis=ats_analysis_data,
-        )
-
-    def ats_analysis(
-        self,
-        user_id: str,
-        resume_id: str,
-        job_description: str | None,
-        target_role: str | None,
-    ) -> ATSAnalysisResponse:
-        self._validate_job_target(job_description, target_role)
-        resume = self._get_resume_data(user_id, resume_id)
-        resume_data = resume.get("resume_data", {})
-
-        system_prompt, user_prompt = prompt_builder.build_ats_analysis_prompt(
-            resume_data, job_description, target_role
-        )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
-        parsed = response_parser.parse_json(raw_response)
-
-        result = ATSAnalysisResponse(
-            overall_score=parsed.get("overall_score", 0),
-            strengths=parsed.get("strengths", []),
-            weaknesses=parsed.get("weaknesses", []),
-            recommendations=parsed.get("recommendations", []),
-            missing_keywords=parsed.get("missing_keywords", []),
-        )
-
-        ats_analysis_repository.upsert(resume_id, result.model_dump())
-
-        return result
-
-    def cover_letter(
-        self,
-        user_id: str,
-        resume_id: str,
-        company_name: str,
-        job_title: str,
-        job_description: str,
-    ) -> CoverLetterResponse:
-        resume = self._get_resume_data(user_id, resume_id)
-        resume_data = resume.get("resume_data", {})
-
-        system_prompt, user_prompt = prompt_builder.build_cover_letter_prompt(
-            resume_data, company_name, job_title, job_description
-        )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
-        parsed = response_parser.parse_json(raw_response)
-        content = parsed.get("content", "")
-
-        cover_letter = cover_letter_repository.create(
-            resume_id, company_name, job_title, content
-        )
-
-        return CoverLetterResponse(
-            id=cover_letter["id"],
-            company_name=company_name,
-            job_title=job_title,
-            content=content,
         )
 
     def improve_summary(
@@ -157,7 +131,7 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_improve_summary_prompt(
             summary, resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
 
         return SummaryResponse(summary=parsed.get("summary", ""))
@@ -171,7 +145,7 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_rewrite_summary_prompt(
             summary, resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
 
         return SummaryResponse(summary=parsed.get("summary", ""))
@@ -188,7 +162,7 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_generate_experience_prompt(
             experience.model_dump(), resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
         exp = parsed.get("experience", {})
 
@@ -212,7 +186,7 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_improve_experience_prompt(
             experience.model_dump(), resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
         exp = parsed.get("experience", {})
 
@@ -236,7 +210,7 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_improve_project_prompt(
             project.model_dump(), resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
         proj = parsed.get("project", {})
 
@@ -259,34 +233,10 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_suggest_skills_prompt(
             skills, resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
+        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
         parsed = response_parser.parse_json(raw_response)
 
         return SkillsResponse(skills=parsed.get("skills", []))
-
-    def fill_fields(
-        self,
-        user_id: str,
-        resume_id: str,
-        job_description: str | None,
-        target_role: str | None,
-    ) -> FillFieldsResponse:
-        resume = self._get_resume_data(user_id, resume_id)
-        resume_data = resume.get("resume_data", {})
-
-        system_prompt, user_prompt = prompt_builder.build_fill_fields_prompt(
-            resume_data, job_description, target_role
-        )
-        raw_response = llm_client.chat(system_prompt, user_prompt)
-        parsed = response_parser.parse_json(raw_response)
-
-        filled_data = parsed.get("resume_data", resume_data)
-
-        resume_repository.update(
-            resume_id, user_id, {"resume_data": filled_data}
-        )
-
-        return FillFieldsResponse(resume_data=filled_data)
 
 
 resume_ai = ResumeAIOrchestrator()

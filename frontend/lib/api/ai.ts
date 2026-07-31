@@ -1,37 +1,15 @@
 import { api } from "./client";
 import type {
   GenerateResponse,
-  ATSAnalysis,
-  CoverLetterResponse,
-  CoverLetterListResponse,
   SummaryResponse,
   ExperienceResponse,
   ProjectResponse,
   SkillsResponse,
-  FillFieldsResponse,
 } from "@/types/ai";
 
 export const aiApi = {
   generate: (resumeId: string, data: { job_description?: string; target_role?: string }) =>
     api.post<GenerateResponse>(`/resumes/${resumeId}/ai/generate`, data),
-
-  atsAnalysis: (resumeId: string, data: { job_description?: string; target_role?: string }) =>
-    api.post<ATSAnalysis>(`/resumes/${resumeId}/ai/ats-analysis`, data),
-
-  getAtsAnalysis: (resumeId: string) =>
-    api.get<ATSAnalysis | null>(`/resumes/${resumeId}/ai/ats-analysis`),
-
-  coverLetter: (resumeId: string, data: { company_name: string; job_title: string; job_description: string }) =>
-    api.post<CoverLetterResponse>(`/resumes/${resumeId}/ai/cover-letter`, data),
-
-  listCoverLetters: (resumeId: string) =>
-    api.get<CoverLetterListResponse>(`/resumes/${resumeId}/ai/cover-letters`),
-
-  deleteCoverLetter: (resumeId: string, coverLetterId: string) =>
-    api.delete(`/resumes/${resumeId}/ai/cover-letters/${coverLetterId}`),
-
-  updateCoverLetter: (resumeId: string, coverLetterId: string, content: string) =>
-    api.patch<CoverLetterResponse>(`/resumes/${resumeId}/ai/cover-letters/${coverLetterId}`, { content }),
 
   improveSummary: (resumeId: string, summary: string) =>
     api.post<SummaryResponse>(`/resumes/${resumeId}/ai/improve-summary`, { summary }),
@@ -50,7 +28,4 @@ export const aiApi = {
 
   suggestSkills: (resumeId: string, skills: string[]) =>
     api.post<SkillsResponse>(`/resumes/${resumeId}/ai/suggest-skills`, { skills }),
-
-  fillFields: (resumeId: string, data: { job_description?: string; target_role?: string }) =>
-    api.post<FillFieldsResponse>(`/resumes/${resumeId}/ai/fill-fields`, data),
 };

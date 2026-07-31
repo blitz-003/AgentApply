@@ -92,7 +92,7 @@ export function renderResumeHtml(data: ResumeData): string {
     html += `<div style="font-size: 9.5pt; margin-bottom: 2px;">${escapeHtml(pi.title)}</div>`;
   }
   const contacts: string[] = [];
-  if (pi.email) contacts.push(`<span style="color: #0066FF;">${escapeHtml(pi.email)}</span>`);
+  if (pi.email) contacts.push(escapeHtml(pi.email));
   if (pi.phone) contacts.push(escapeHtml(pi.phone));
   if (pi.location) contacts.push(escapeHtml(pi.location));
   if (pi.linkedin) contacts.push(escapeHtml(pi.linkedin));

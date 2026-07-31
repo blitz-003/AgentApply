@@ -22,31 +22,27 @@ export function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
   const exportMutation = useExportResume();
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950">
-      <h3 className="truncate text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+    <div className="flex flex-col rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card">
+      <h3 className="truncate text-lg font-semibold text-ink">
         {resume.title}
       </h3>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-1 text-sm text-muted">
         {resume.target_role || "Ready for AI optimization"}
       </p>
-      <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-500">
-        AI-optimized resume
-      </p>
-      <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
-        Updated {formattedDate}
-      </p>
-      <div className="mt-4 flex gap-2">
+      <p className="mt-1 text-sm text-muted-soft">AI-optimized resume</p>
+      <p className="mt-2 text-xs text-muted-soft">Updated {formattedDate}</p>
+      <div className="mt-4 flex flex-1 items-end gap-2">
         <button
           onClick={() => exportMutation.mutate(resume.id)}
           disabled={exportMutation.isPending}
-          className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="rounded-sm bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
         >
           {exportMutation.isPending ? "Exporting..." : "Download"}
         </button>
         <button
           onClick={() => onDelete(resume.id)}
           disabled={isDeleting}
-          className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
         >
           Delete
         </button>

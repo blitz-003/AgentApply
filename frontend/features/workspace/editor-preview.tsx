@@ -19,18 +19,21 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
   const [text, setText] = useState(() => resumeToText(initialData));
   const [previewData, setPreviewData] = useState(initialData);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const latestRef = useRef(initialData);
 
   const coverLetterContent = generateResult?.cover_letter as Record<string, unknown> | undefined;
   const [coverText, setCoverText] = useState(() => (coverLetterContent?.content as string) || "");
 
-  useEffect(() => {
+  const [prevInitialData, setPrevInitialData] = useState(initialData);
+  if (prevInitialData !== initialData) {
+    setPrevInitialData(initialData);
     setText(resumeToText(initialData));
     setPreviewData(initialData);
     setCoverText((coverLetterContent?.content as string) || "");
-    latestRef.current = initialData;
+  }
+
+  useEffect(() => {
     onChange?.(initialData);
-  }, [initialData, onChange, coverLetterContent?.content]);
+  }, [initialData, onChange]);
 
   const handleChange = useCallback((value: string) => {
     setText(value);
@@ -38,7 +41,6 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
     debounceRef.current = setTimeout(() => {
       const parsed = textToResumeData(value);
       setPreviewData(parsed);
-      latestRef.current = parsed;
       onChange?.(parsed);
     }, 300);
   }, [onChange]);
@@ -65,26 +67,26 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
 
   return (
     <div className="flex flex-1 flex-col min-h-0">
-      <div className="grid grid-cols-3 items-center border-b border-zinc-200 px-6 py-2 dark:border-zinc-800 shrink-0">
+      <div className="grid grid-cols-3 items-center border-b border-hairline px-6 py-2 shrink-0">
         <div />
         <div className="flex justify-center">
-          <div className="flex items-center gap-1 rounded-lg border border-zinc-300 p-0.5 dark:border-zinc-700">
+          <div className="flex items-center gap-1 rounded-full border border-hairline bg-surface-soft p-1">
             <button
               onClick={() => setViewMode("resume")}
-              className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 viewMode === "resume"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                  : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+                  ? "bg-canvas text-ink shadow-card"
+                  : "text-muted hover:text-ink"
               }`}
             >
               Resume
             </button>
             <button
               onClick={() => setViewMode("coverletter")}
-              className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 viewMode === "coverletter"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                  : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+                  ? "bg-canvas text-ink shadow-card"
+                  : "text-muted hover:text-ink"
               }`}
             >
               Cover Letter
@@ -95,7 +97,7 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
           {onDownloadAll && (
             <button
               onClick={onDownloadAll}
-              className="flex items-center gap-2 rounded-md bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex items-center gap-2 rounded-sm bg-primary px-5 py-2 text-sm font-medium text-white hover:bg-primary-active"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -109,23 +111,23 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
       {viewMode === "resume" ? (
         <div className="flex flex-1 min-h-0">
           <div className="flex w-1/2 flex-col min-h-0">
-            <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2 dark:border-zinc-800 shrink-0">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Editor</span>
+            <div className="flex items-center justify-between border-b border-hairline px-4 py-2 shrink-0">
+              <span className="text-sm font-medium text-muted">Editor</span>
             </div>
             <textarea
               value={text}
               onChange={(e) => handleChange(e.target.value)}
-              className="flex-1 resize-none border-0 bg-zinc-50 p-4 font-mono text-xs leading-relaxed text-zinc-800 outline-none focus:bg-white dark:bg-zinc-950 dark:text-zinc-200 dark:focus:bg-zinc-900 min-h-0"
+              className="flex-1 resize-none border-0 bg-surface-soft p-4 font-mono text-xs leading-relaxed text-ink outline-none focus:bg-canvas min-h-0"
               spellCheck={false}
             />
           </div>
 
           <div className="flex w-1/2 flex-col min-h-0">
-            <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2 dark:border-zinc-800 shrink-0">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Preview</span>
+            <div className="flex items-center justify-between border-b border-hairline px-4 py-2 shrink-0">
+              <span className="text-sm font-medium text-muted">Preview</span>
             </div>
-            <div className="flex-1 overflow-y-auto bg-zinc-100 p-8 min-h-0 dark:bg-zinc-900">
-              <div className="mx-auto bg-white shadow-lg" style={{ maxWidth: 600, minHeight: 400 }}>
+            <div className="flex-1 overflow-y-auto bg-surface-strong p-8 min-h-0">
+              <div className="mx-auto bg-white shadow-card" style={{ maxWidth: 600, minHeight: 400 }}>
                 <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
               </div>
             </div>
@@ -134,22 +136,22 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
       ) : (
         <div className="flex flex-1 min-h-0">
           <div className="flex w-1/2 flex-col min-h-0">
-            <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2 dark:border-zinc-800 shrink-0">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Editor</span>
+            <div className="flex items-center justify-between border-b border-hairline px-4 py-2 shrink-0">
+              <span className="text-sm font-medium text-muted">Editor</span>
             </div>
             <textarea
               value={coverText}
               onChange={(e) => setCoverText(e.target.value)}
-              className="flex-1 resize-none border-0 bg-zinc-50 p-4 font-mono text-xs leading-relaxed text-zinc-800 outline-none focus:bg-white dark:bg-zinc-950 dark:text-zinc-200 dark:focus:bg-zinc-900 min-h-0"
+              className="flex-1 resize-none border-0 bg-surface-soft p-4 font-mono text-xs leading-relaxed text-ink outline-none focus:bg-canvas min-h-0"
             />
           </div>
 
           <div className="flex w-1/2 flex-col min-h-0">
-            <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2 dark:border-zinc-800 shrink-0">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Preview</span>
+            <div className="flex items-center justify-between border-b border-hairline px-4 py-2 shrink-0">
+              <span className="text-sm font-medium text-muted">Preview</span>
             </div>
-            <div className="flex-1 overflow-y-auto bg-zinc-100 p-8 min-h-0 dark:bg-zinc-900">
-              <div className="mx-auto bg-white shadow-lg overflow-hidden" style={{ width: 600, height: 849 }}>
+            <div className="flex-1 overflow-y-auto bg-surface-strong p-8 min-h-0">
+              <div className="mx-auto bg-white shadow-card overflow-hidden" style={{ width: 600, height: 849 }}>
                 <div style={{ width: 800, transform: 'scale(0.75)', transformOrigin: 'top left' }}>
                   <div dangerouslySetInnerHTML={{ __html: coverLetterHtml }} />
                 </div>

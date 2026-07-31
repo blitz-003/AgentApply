@@ -7,9 +7,9 @@ interface EmptyStateProps {
 export function EmptyState({ onCreateResume }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="rounded-full bg-zinc-100 p-4 dark:bg-zinc-800">
+      <div className="rounded-full bg-surface-soft p-4">
         <svg
-          className="h-8 w-8 text-zinc-500"
+          className="h-8 w-8 text-muted"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -22,15 +22,15 @@ export function EmptyState({ onCreateResume }: EmptyStateProps) {
           />
         </svg>
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+      <h3 className="mt-4 text-lg font-semibold text-ink">
         No resumes yet
       </h3>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-2 text-sm text-muted">
         Create your first AI-powered resume
       </p>
       <button
         onClick={onCreateResume}
-        className="mt-6 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="mt-6 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active"
       >
         Create Resume
       </button>

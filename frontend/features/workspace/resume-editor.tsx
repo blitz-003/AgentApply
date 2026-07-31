@@ -9,7 +9,7 @@ import {
   useImproveProject,
   useSuggestSkills,
 } from "./hooks";
-import { useToast } from "@/components/toast-context";
+import { toast } from "sonner";
 
 interface ResumeEditorProps {
   resumeId: string;
@@ -135,7 +135,6 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const improveExperienceMutation = useImproveExperience(resumeId);
   const improveProjectMutation = useImproveProject(resumeId);
   const suggestSkillsMutation = useSuggestSkills(resumeId);
-  const { addToast } = useToast();
 
   const buildResumeData = useCallback((): Record<string, unknown> => ({
     personal_info: personalInfo,
@@ -150,8 +149,8 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
     updateMutation.mutate(
       { resume_data: buildResumeData() },
       {
-        onSuccess: () => addToast("Resume updated successfully", "success"),
-        onError: () => addToast("Resume save failed", "error"),
+        onSuccess: () => toast.success("Resume updated successfully"),
+        onError: () => toast.error("Resume save failed"),
       }
     );
   };
@@ -159,7 +158,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const handleImproveSummary = () => {
     improveSummaryMutation.mutate(summary, {
       onSuccess: (result) => setSummary(result.summary),
-      onError: () => addToast("AI request failed", "error"),
+      onError: () => toast.error("AI request failed"),
     });
   };
 
@@ -172,7 +171,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
           prev.map((e, i) => (i === index ? result.experience : e))
         );
       },
-      onError: () => addToast("AI request failed", "error"),
+      onError: () => toast.error("AI request failed"),
       onSettled: () => setImprovingExpIndex(null),
     });
   };
@@ -186,7 +185,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
           prev.map((p, i) => (i === index ? result.project : p))
         );
       },
-      onError: () => addToast("AI request failed", "error"),
+      onError: () => toast.error("AI request failed"),
       onSettled: () => setImprovingProjIndex(null),
     });
   };
@@ -194,7 +193,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const handleSuggestSkills = () => {
     suggestSkillsMutation.mutate(skills, {
       onSuccess: (result) => setSkills(result.skills),
-      onError: () => addToast("AI request failed", "error"),
+      onError: () => toast.error("AI request failed"),
     });
   };
 
@@ -246,14 +245,14 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
         <div className="mx-auto max-w-3xl space-y-8">
           {/* Resume Title + Actions */}
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            <h1 className="text-lg font-semibold text-ink">
               {resume.title}
             </h1>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleSave}
                 disabled={updateMutation.isPending}
-                className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
               >
                 {updateMutation.isPending ? "Saving..." : "Save"}
               </button>
@@ -261,8 +260,8 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
           </div>
 
           {/* Personal Information */}
-            <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-              <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            <section className="rounded-md border border-hairline-soft bg-canvas p-6">
+              <h2 className="mb-4 text-lg font-semibold text-ink">
                 Personal Information
               </h2>
               <div className="grid grid-cols-2 gap-4">
@@ -271,56 +270,56 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                   placeholder="Full Name"
                   value={personalInfo.name}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, name: e.target.value }))}
-                  className="col-span-2 rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="col-span-2 rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={personalInfo.email}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, email: e.target.value }))}
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
                 <input
                   type="tel"
                   placeholder="Phone"
                   value={personalInfo.phone}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, phone: e.target.value }))}
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
                 <input
                   type="text"
                   placeholder="Location"
                   value={personalInfo.location}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, location: e.target.value }))}
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
                 <input
                   type="text"
                   placeholder="LinkedIn URL"
                   value={personalInfo.linkedin}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, linkedin: e.target.value }))}
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
                 <input
                   type="text"
                   placeholder="GitHub URL"
                   value={personalInfo.github}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, github: e.target.value }))}
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
               </div>
             </section>
 
             {/* Professional Summary */}
-            <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+            <section className="rounded-md border border-hairline-soft bg-canvas p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-lg font-semibold text-ink">
                   Professional Summary
                 </h2>
                 <button
                   onClick={handleImproveSummary}
                   disabled={improveSummaryMutation.isPending}
-                  className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
                 >
                   {improveSummaryMutation.isPending ? "Improving..." : "Improve with AI"}
                 </button>
@@ -329,21 +328,21 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 rows={4}
-                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 placeholder="Write a brief professional summary..."
               />
             </section>
 
             {/* Experience */}
-            <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+            <section className="rounded-md border border-hairline-soft bg-canvas p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-lg font-semibold text-ink">
                   Experience
                 </h2>
                 {experience.length < 3 && (
                   <button
                     onClick={handleAddExperience}
-                    className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft"
                   >
                     + Add
                   </button>
@@ -351,14 +350,14 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
               </div>
               <div className="space-y-4">
                 {experience.map((entry, index) => (
-                  <div key={index} className="space-y-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+                  <div key={index} className="space-y-3 rounded-sm border border-hairline-soft p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                      <span className="text-xs font-medium text-muted">
                         Entry {index + 1}
                       </span>
                       <button
                         onClick={() => handleRemoveExperience(index)}
-                        className="text-xs text-red-500 hover:text-red-700"
+                        className="text-xs text-error hover:text-error-hover"
                       >
                         Remove
                       </button>
@@ -375,7 +374,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -388,7 +387,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -403,7 +402,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -416,7 +415,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                     </div>
                     <textarea
@@ -430,19 +429,19 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                         )
                       }
                       rows={3}
-                      className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                     />
                     <button
                       onClick={() => handleImproveExperience(index)}
                       disabled={improvingExpIndex !== null}
-                      className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
                     >
                       {improvingExpIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
                   </div>
                 ))}
                 {experience.length === 0 && (
-                  <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                  <p className="text-sm text-muted">
                     No experience entries yet. Click &quot;+ Add&quot; to add one.
                   </p>
                 )}
@@ -450,15 +449,15 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
             </section>
 
             {/* Projects */}
-            <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+            <section className="rounded-md border border-hairline-soft bg-canvas p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-lg font-semibold text-ink">
                   Projects
                 </h2>
                 {projects.length < 3 && (
                   <button
                     onClick={handleAddProject}
-                    className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft"
                   >
                     + Add
                   </button>
@@ -466,14 +465,14 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
               </div>
               <div className="space-y-4">
                 {projects.map((entry, index) => (
-                  <div key={index} className="space-y-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+                  <div key={index} className="space-y-3 rounded-sm border border-hairline-soft p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                      <span className="text-xs font-medium text-muted">
                         Entry {index + 1}
                       </span>
                       <button
                         onClick={() => handleRemoveProject(index)}
-                        className="text-xs text-red-500 hover:text-red-700"
+                        className="text-xs text-error hover:text-error-hover"
                       >
                         Remove
                       </button>
@@ -489,7 +488,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                           )
                         )
                       }
-                      className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                     />
                     <div className="grid grid-cols-2 gap-3">
                       <input
@@ -503,7 +502,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -516,7 +515,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                     </div>
                     <textarea
@@ -530,19 +529,19 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                         )
                       }
                       rows={3}
-                      className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                     />
                     <button
                       onClick={() => handleImproveProject(index)}
                       disabled={improvingProjIndex !== null}
-                      className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
                     >
                       {improvingProjIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
                   </div>
                 ))}
                 {projects.length === 0 && (
-                  <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                  <p className="text-sm text-muted">
                     No project entries yet. Click &quot;+ Add&quot; to add one.
                   </p>
                 )}
@@ -550,15 +549,15 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
             </section>
 
             {/* Skills */}
-            <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+            <section className="rounded-md border border-hairline-soft bg-canvas p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-lg font-semibold text-ink">
                   Skills
                 </h2>
                 <button
                   onClick={handleSuggestSkills}
                   disabled={suggestSkillsMutation.isPending}
-                  className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
                 >
                   {suggestSkillsMutation.isPending ? "Suggesting..." : "Suggest Skills"}
                 </button>
@@ -567,12 +566,12 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 {skills.map((skill) => (
                   <span
                     key={skill}
-                    className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                    className="inline-flex items-center gap-1 rounded-full bg-surface-soft px-3 py-1 text-sm text-ink"
                   >
                     {skill}
                     <button
                       onClick={() => handleRemoveSkill(skill)}
-                      className="ml-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                      className="ml-1 text-muted-soft hover:text-muted"
                     >
                       &times;
                     </button>
@@ -586,11 +585,11 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                   onChange={(e) => setNewSkill(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSkill())}
                   placeholder="Add a skill..."
-                  className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  className="flex-1 rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                 />
                 <button
                   onClick={handleAddSkill}
-                  className="rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  className="rounded-sm border border-hairline px-3 py-2 text-sm font-medium text-ink hover:bg-surface-soft"
                 >
                   Add
                 </button>
@@ -598,28 +597,28 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
             </section>
 
             {/* Education */}
-            <section className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
+            <section className="rounded-md border border-hairline-soft bg-canvas p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h2 className="text-lg font-semibold text-ink">
                   Education
                 </h2>
                 <button
                   onClick={handleAddEducation}
-                  className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft"
                 >
                   + Add
                 </button>
               </div>
               <div className="space-y-4">
                 {education.map((entry, index) => (
-                  <div key={index} className="space-y-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+                  <div key={index} className="space-y-3 rounded-sm border border-hairline-soft p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                      <span className="text-xs font-medium text-muted">
                         Entry {index + 1}
                       </span>
                       <button
                         onClick={() => handleRemoveEducation(index)}
-                        className="text-xs text-red-500 hover:text-red-700"
+                        className="text-xs text-error hover:text-error-hover"
                       >
                         Remove
                       </button>
@@ -635,7 +634,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                           )
                         )
                       }
-                      className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                     />
                     <div className="grid grid-cols-2 gap-3">
                       <input
@@ -649,7 +648,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -662,7 +661,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -677,7 +676,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -690,13 +689,13 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
                       />
                     </div>
                   </div>
                 ))}
                 {education.length === 0 && (
-                  <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                  <p className="text-sm text-muted">
                     No education entries yet. Click &quot;+ Add&quot; to add one.
                   </p>
                 )}

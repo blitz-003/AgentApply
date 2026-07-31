@@ -25,15 +25,6 @@ const PI_KEYS: Record<string, string> = {
   GitHub: "github",
 };
 
-function isSectionHeader(line: string): string | null {
-  for (const h of SECTION_HEADERS) {
-    if (line === h || line.startsWith(h + "  ") || line.startsWith(h + "\t")) {
-      return h;
-    }
-  }
-  return null;
-}
-
 export function resumeToText(data: Record<string, unknown>): string {
   const parts: string[] = [];
 

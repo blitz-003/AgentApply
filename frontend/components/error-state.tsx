@@ -6,9 +6,9 @@ interface ErrorStateProps {
 export function ErrorState({ message = "Something went wrong", onRetry }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="rounded-full bg-red-100 p-4 dark:bg-red-900/20">
+      <div className="rounded-full bg-surface-soft p-4">
         <svg
-          className="h-8 w-8 text-red-500"
+          className="h-8 w-8 text-error"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -21,16 +21,16 @@ export function ErrorState({ message = "Something went wrong", onRetry }: ErrorS
           />
         </svg>
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+      <h3 className="mt-4 text-lg font-semibold text-ink">
         {message}
       </h3>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-2 text-sm text-muted">
         Please try again later
       </p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-6 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="mt-6 rounded-sm border border-ink px-4 py-2 text-sm font-medium text-ink hover:bg-surface-soft"
         >
           Retry
         </button>

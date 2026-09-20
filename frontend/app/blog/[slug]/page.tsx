@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { blogPosts, getPostBySlug } from "@/lib/blog";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -30,10 +32,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="bg-canvas">
-      <article className="mx-auto max-w-3xl px-6 py-16 lg:py-20">
+      <Reveal className="mx-auto max-w-3xl px-6 py-16 lg:py-20">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-ink"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-primary"
         >
           <svg
             className="h-4 w-4"
@@ -58,7 +60,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <span className="text-xs text-muted-soft">{post.readTime}</span>
         </div>
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-ink md:text-5xl">
-          {post.title}
+          <TextReveal as="span" text={post.title} />
         </h1>
         <p className="mt-5 text-lg leading-relaxed text-body">
           {post.description}
@@ -125,12 +127,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           </p>
           <Link
             href="/register"
-            className="mt-6 inline-flex h-12 items-center rounded-full bg-primary px-7 text-base font-medium text-white transition-colors hover:bg-primary-active"
+            className="btn-grow mt-6 inline-flex h-12 items-center rounded-full bg-primary px-7 text-base font-medium text-white hover:bg-primary-active"
           >
             Build My Resume
           </Link>
         </div>
-      </article>
+      </Reveal>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { blogPosts } from "@/lib/blog";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 
 export const metadata: Metadata = {
   title: "Blog | Agent Apply",
@@ -12,22 +14,22 @@ export default function BlogPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
+        <Reveal className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
           <span className="text-xs font-semibold uppercase tracking-wide text-primary">
             Blog
           </span>
           <h1 className="mt-3 max-w-2xl text-4xl font-bold tracking-tight text-ink md:text-5xl">
-            Guides that get you hired
+            <TextReveal as="span" text="Guides that get you hired" />
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted">
             No filler. Practical advice on resumes, ATS systems, and the job
             search — tested against thousands of real applications.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {blogPosts.map((post) => (
               <Link
@@ -72,7 +74,7 @@ export default function BlogPage() {
               </Link>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/auth-context";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 
 const roles = [
   "Senior Frontend Developer",
@@ -81,14 +83,28 @@ export function Hero() {
   return (
     <section className="bg-canvas">
       <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
-        <div>
+        <Reveal delay={0}>
           <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-xs font-medium text-muted">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+              <span className="dot-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-primary/60" />
+              <span className="dot-pulse absolute inline-flex h-2 w-2 rounded-full bg-primary" />
+              <span className="dot-core relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+            </span>
             AI-Powered Resume Builder
           </span>
           <h1 className="mt-6 max-w-xl text-4xl font-bold leading-[1.1] tracking-tight text-ink md:text-5xl">
-            Resumes that get you the{" "}
-            <span className="text-primary">interview</span>.
+            <TextReveal
+              as="span"
+              text="Resumes that get you the "
+              className="block"
+            />
+            <TextReveal
+              as="span"
+              text="interview"
+              className="block text-primary"
+              delay={0.9}
+            />
+            .
           </h1>
           <p className="mt-5 max-w-lg text-base leading-relaxed text-body md:text-lg">
             Paste a job description, upload your resume, and let AI tailor your
@@ -98,7 +114,7 @@ export function Hero() {
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
               href={isAuthenticated ? "/dashboard" : "/register"}
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-base font-medium text-white transition-colors hover:bg-primary-active"
+              className="btn-grow inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-base font-medium text-white hover:bg-primary-active"
             >
               Build My Resume
               <svg
@@ -117,7 +133,7 @@ export function Hero() {
             </Link>
             <Link
               href="#how-it-works"
-              className="inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink transition-colors hover:bg-surface-soft"
+              className="btn-grow inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary"
             >
               See how it works
             </Link>
@@ -138,9 +154,9 @@ export function Hero() {
               <div className="text-sm text-muted">user rating</div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="relative">
+        <Reveal delay={0.15}>
           <div className="rounded-md bg-white p-1 shadow-card">
             <div className="flex items-center gap-1.5 rounded-t-sm bg-surface-strong px-4 py-3">
               <span className="h-2.5 w-2.5 rounded-full bg-hairline" />
@@ -253,7 +269,7 @@ export function Hero() {
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

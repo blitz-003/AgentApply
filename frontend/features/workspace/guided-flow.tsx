@@ -22,7 +22,7 @@ type Step =
   | "editor-preview";
 
 const inputClass =
-  "w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0";
+  "field-focus w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:outline-none focus:ring-0";
 
 const progressMessages = [
   "Uploading your resume...",
@@ -175,7 +175,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
               className={`rounded-full border px-6 py-3 text-sm font-medium transition-colors ${
                 hasJobDescription === true
                   ? "border-primary bg-primary text-white"
-                  : "border-hairline text-muted hover:border-ink hover:text-ink"
+                  : "border-hairline text-muted hover:border-primary hover:bg-primary-disabled hover:text-primary"
               }`}
             >
               Paste a Job Description
@@ -185,7 +185,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
               className={`rounded-full border px-6 py-3 text-sm font-medium transition-colors ${
                 hasJobDescription === false
                   ? "border-primary bg-primary text-white"
-                  : "border-hairline text-muted hover:border-ink hover:text-ink"
+                  : "border-hairline text-muted hover:border-primary hover:bg-primary-disabled hover:text-primary"
               }`}
             >
               Just a Target Role
@@ -229,7 +229,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
                 (hasJobDescription === true && !jobDescription.trim()) ||
                 (hasJobDescription === false && !targetRole.trim())
               }
-              className="w-full rounded-sm bg-primary px-4 py-3 text-base font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
+              className="btn-grow w-full rounded-sm bg-primary px-4 py-3 text-base font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
             >
               Next
             </button>
@@ -262,7 +262,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
           <button
             onClick={handleUploadClick}
             disabled={uploadMutation.isPending}
-            className="flex w-full flex-col items-center gap-3 rounded-md border-2 border-hairline bg-canvas p-10 text-center transition-colors hover:border-primary disabled:opacity-50"
+            className="btn-grow flex w-full flex-col items-center gap-3 rounded-md border-2 border-hairline bg-canvas p-10 text-center transition-colors hover:border-primary disabled:opacity-50"
           >
             <svg
               className="h-12 w-12 text-muted-soft"
@@ -295,7 +295,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
 
           <button
             onClick={() => setStep("target-job")}
-            className="w-full text-sm text-muted hover:text-ink"
+            className="w-full text-sm text-muted hover:text-primary"
           >
             Back
           </button>
@@ -526,7 +526,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
 
           <button
             onClick={() => setStep("editor-preview")}
-            className="flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-4 text-base font-semibold text-white hover:bg-primary-active"
+            className="btn-grow flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-4 text-base font-semibold text-white hover:bg-primary-active"
           >
             View Optimized Resume
             <svg

@@ -88,7 +88,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-ink hover:text-ink"
+                  className="btn-grow flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-primary hover:bg-primary-disabled hover:text-primary"
                 >
                   {social.icon}
                 </a>
@@ -103,7 +103,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted transition-colors hover:text-ink"
+                    className="text-sm text-muted transition-colors hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -119,7 +119,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted transition-colors hover:text-ink"
+                    className="text-sm text-muted transition-colors hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -135,7 +135,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted transition-colors hover:text-ink"
+                    className="text-sm text-muted transition-colors hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -144,7 +144,7 @@ export function SiteFooter() {
             </ul>
             <a
               href="mailto:support@agentapply.app"
-              className="mt-6 inline-block text-sm text-muted transition-colors hover:text-ink"
+              className="mt-6 inline-block text-sm text-muted transition-colors hover:text-primary"
             >
               support@agentapply.app
             </a>
@@ -158,10 +158,10 @@ export function SiteFooter() {
             &copy; 2026 Agent Apply. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-xs text-muted hover:text-ink">
+            <Link href="/privacy" className="text-xs text-muted hover:text-primary">
               Privacy
             </Link>
-            <Link href="/terms" className="text-xs text-muted hover:text-ink">
+            <Link href="/terms" className="text-xs text-muted hover:text-primary">
               Terms
             </Link>
             <span className="text-xs text-muted">English (US)</span>

@@ -270,42 +270,42 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                   placeholder="Full Name"
                   value={personalInfo.name}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, name: e.target.value }))}
-                  className="col-span-2 rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="col-span-2 rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={personalInfo.email}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, email: e.target.value }))}
-                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
                 <input
                   type="tel"
                   placeholder="Phone"
                   value={personalInfo.phone}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, phone: e.target.value }))}
-                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
                 <input
                   type="text"
                   placeholder="Location"
                   value={personalInfo.location}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, location: e.target.value }))}
-                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
                 <input
                   type="text"
                   placeholder="LinkedIn URL"
                   value={personalInfo.linkedin}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, linkedin: e.target.value }))}
-                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
                 <input
                   type="text"
                   placeholder="GitHub URL"
                   value={personalInfo.github}
                   onChange={(e) => setPersonalInfo((p) => ({ ...p, github: e.target.value }))}
-                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
               </div>
             </section>
@@ -319,7 +319,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 <button
                   onClick={handleImproveSummary}
                   disabled={improveSummaryMutation.isPending}
-                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
                 >
                   {improveSummaryMutation.isPending ? "Improving..." : "Improve with AI"}
                 </button>
@@ -328,7 +328,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 rows={4}
-                className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 placeholder="Write a brief professional summary..."
               />
             </section>
@@ -342,7 +342,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 {experience.length < 3 && (
                   <button
                     onClick={handleAddExperience}
-                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft"
+                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary"
                   >
                     + Add
                   </button>
@@ -374,7 +374,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -387,7 +387,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -402,7 +402,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -415,7 +415,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                     </div>
                     <textarea
@@ -429,12 +429,12 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                         )
                       }
                       rows={3}
-                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                     />
                     <button
                       onClick={() => handleImproveExperience(index)}
                       disabled={improvingExpIndex !== null}
-                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
                     >
                       {improvingExpIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
@@ -457,7 +457,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 {projects.length < 3 && (
                   <button
                     onClick={handleAddProject}
-                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft"
+                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary"
                   >
                     + Add
                   </button>
@@ -488,7 +488,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                           )
                         )
                       }
-                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                     />
                     <div className="grid grid-cols-2 gap-3">
                       <input
@@ -502,7 +502,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -515,7 +515,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                     </div>
                     <textarea
@@ -529,12 +529,12 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                         )
                       }
                       rows={3}
-                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                     />
                     <button
                       onClick={() => handleImproveProject(index)}
                       disabled={improvingProjIndex !== null}
-                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
                     >
                       {improvingProjIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
@@ -557,7 +557,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 <button
                   onClick={handleSuggestSkills}
                   disabled={suggestSkillsMutation.isPending}
-                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
                 >
                   {suggestSkillsMutation.isPending ? "Suggesting..." : "Suggest Skills"}
                 </button>
@@ -585,11 +585,11 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                   onChange={(e) => setNewSkill(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSkill())}
                   placeholder="Add a skill..."
-                  className="flex-1 rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                  className="flex-1 rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                 />
                 <button
                   onClick={handleAddSkill}
-                  className="rounded-sm border border-hairline px-3 py-2 text-sm font-medium text-ink hover:bg-surface-soft"
+                  className="rounded-sm border border-hairline px-3 py-2 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary"
                 >
                   Add
                 </button>
@@ -604,7 +604,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 </h2>
                 <button
                   onClick={handleAddEducation}
-                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary"
                 >
                   + Add
                 </button>
@@ -634,7 +634,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                           )
                         )
                       }
-                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                      className="w-full rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                     />
                     <div className="grid grid-cols-2 gap-3">
                       <input
@@ -648,7 +648,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -661,7 +661,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -676,7 +676,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                       <input
                         type="text"
@@ -689,7 +689,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                             )
                           )
                         }
-                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+                        className="rounded-sm border border-hairline bg-canvas px-3 py-2 text-sm text-ink placeholder:text-muted-soft field-focus focus:outline-none focus:ring-0"
                       />
                     </div>
                   </div>

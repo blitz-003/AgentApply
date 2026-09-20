@@ -41,7 +41,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-soft hover:text-ink"
+              className="rounded-full px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary-disabled hover:text-primary"
             >
               {link.label}
             </Link>
@@ -56,7 +56,7 @@ export function Navbar() {
               </span>
               <button
                 onClick={logout}
-                className="rounded-sm border border-ink bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-surface-soft"
+                className="btn-grow rounded-sm border border-ink bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:bg-primary-disabled hover:text-primary"
               >
                 Logout
               </button>
@@ -65,13 +65,13 @@ export function Navbar() {
             <>
               <Link
                 href="/login"
-                className="hidden rounded-full px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-soft hover:text-ink sm:block"
+                className="hidden rounded-full px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary-disabled hover:text-primary sm:block"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-active"
+                className="btn-grow rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active"
               >
                 Get Started
               </Link>
@@ -123,7 +123,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-surface-soft"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-primary-disabled hover:text-primary"
               >
                 {link.label}
               </Link>
@@ -136,7 +136,7 @@ export function Navbar() {
                     setMenuOpen(false);
                     logout();
                   }}
-                  className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-muted transition-colors hover:bg-surface-soft"
+                  className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-muted transition-colors hover:bg-primary-disabled hover:text-primary"
                 >
                   Logout ({user?.name})
                 </button>
@@ -146,14 +146,14 @@ export function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-surface-soft"
+                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-primary-disabled hover:text-primary"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setMenuOpen(false)}
-                  className="mt-1 rounded-sm bg-primary px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-primary-active"
+                  className="btn-grow mt-1 rounded-sm bg-primary px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-active"
                 >
                   Get Started
                 </Link>

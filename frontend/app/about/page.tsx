@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactForm } from "@/components/marketing/contact-form";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 
 export const metadata: Metadata = {
   title: "About & Contact | Agent Apply",
@@ -35,13 +37,13 @@ export default function AboutPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <div className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
+        <Reveal className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
           <div className="max-w-2xl">
             <span className="text-xs font-semibold uppercase tracking-wide text-primary">
               About us
             </span>
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-ink md:text-5xl">
-              We help great candidates stop being invisible
+              <TextReveal as="span" text="We help great candidates stop being invisible" />
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-body">
               Agent Apply started with a frustrating observation: qualified
@@ -56,13 +58,13 @@ export default function AboutPage() {
               like it was written by a person who actually cares.
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight text-ink">
-            What we believe
+            <TextReveal as="span" text="What we believe" />
           </h2>
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
             {values.map((value) => (
@@ -79,21 +81,21 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section
         id="contact"
         className="border-t border-hairline-soft bg-surface-soft py-16 lg:py-24"
       >
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wide text-primary">
                 Contact
               </span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink">
-                We&apos;d love to hear from you
+                <TextReveal as="span" text="We'd love to hear from you" />
               </h2>
               <p className="mt-4 text-base leading-relaxed text-muted">
                 Questions about your resume, the product, partnerships, or
@@ -192,7 +194,7 @@ export default function AboutPage() {
               <ContactForm />
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

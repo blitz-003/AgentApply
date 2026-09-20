@@ -17,7 +17,7 @@ import { ResumeCard } from "@/features/dashboard/resume-card";
 import { ErrorState } from "@/components/error-state";
 
 const inputClass =
-  "w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0";
+  "field-focus w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:outline-none focus:ring-0";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -81,7 +81,7 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={() => setShowCreateDialog(true)}
-            className="rounded-sm bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-active"
+            className="btn-grow rounded-sm bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-active"
           >
             + New Resume
           </button>
@@ -119,7 +119,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => setPage(page - 1)}
                     disabled={page === 1}
-                    className="rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+                    className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
                   >
                     Previous
                   </button>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => setPage(page + 1)}
                     disabled={page === totalPages}
-                    className="rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+                    className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
                   >
                     Next
                   </button>
@@ -163,14 +163,14 @@ export default function DashboardPage() {
                   setShowCreateDialog(false);
                   setNewResumeTitle("");
                 }}
-                className="rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-surface-soft"
+                className="btn-grow rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateResume}
                 disabled={!newResumeTitle.trim() || createResume.isPending}
-                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
+                className="btn-grow rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
               >
                 {createResume.isPending ? "Creating..." : "Create"}
               </button>
@@ -190,14 +190,14 @@ export default function DashboardPage() {
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setDeleteId(null)}
-                className="rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-surface-soft"
+                className="btn-grow rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
                 disabled={deleteResume.isPending}
-                className="rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
+                className="btn-grow rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
               >
                 {deleteResume.isPending ? "Deleting..." : "Delete"}
               </button>

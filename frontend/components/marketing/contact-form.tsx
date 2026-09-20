@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const inputClass =
-  "w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0";
+  "field-focus w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:outline-none focus:ring-0";
 
 export function ContactForm() {
   const [name, setName] = useState("");
@@ -101,7 +101,7 @@ export function ContactForm() {
       </div>
       <button
         type="submit"
-        className="inline-flex h-12 w-full items-center justify-center rounded-sm bg-primary px-6 text-base font-medium text-white transition-colors hover:bg-primary-active"
+        className="btn-grow inline-flex h-12 w-full items-center justify-center rounded-sm bg-primary px-6 text-base font-medium text-white hover:bg-primary-active"
       >
         Send Message
       </button>

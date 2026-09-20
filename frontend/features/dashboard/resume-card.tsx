@@ -35,14 +35,14 @@ export function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
         <button
           onClick={() => exportMutation.mutate(resume.id)}
           disabled={exportMutation.isPending}
-          className="rounded-sm bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
+          className="btn-grow rounded-sm bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
         >
           {exportMutation.isPending ? "Exporting..." : "Download"}
         </button>
         <button
           onClick={() => onDelete(resume.id)}
           disabled={isDeleting}
-          className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-surface-soft disabled:opacity-50"
+          className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
         >
           Delete
         </button>

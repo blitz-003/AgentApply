@@ -22,7 +22,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         placeholder="Search resumes..."
         value={value}
         onChange={handleChange}
-        className="w-full rounded-full border border-hairline bg-canvas px-5 py-3 pl-11 text-sm text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0"
+        className="field-focus w-full rounded-full border border-hairline bg-canvas px-5 py-3 pl-11 text-sm text-ink placeholder:text-muted-soft focus:outline-none focus:ring-0"
       />
       <svg
         className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-soft"

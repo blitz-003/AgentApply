@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Hero } from "@/components/marketing/hero";
 import { useAuth } from "@/features/auth/auth-context";
 import { getLatestPosts } from "@/lib/blog";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 
 const features = [
   {
@@ -138,17 +140,17 @@ function SectionHeading({
   subtitle?: string;
 }) {
   return (
-    <div className="mx-auto max-w-2xl text-center">
+    <Reveal className="mx-auto max-w-2xl text-center">
       <span className="text-xs font-semibold uppercase tracking-wide text-primary">
         {eyebrow}
       </span>
       <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink md:text-4xl">
-        {title}
+        <TextReveal as="span" text={title} />
       </h2>
       {subtitle && (
         <p className="mt-4 text-base leading-relaxed text-muted">{subtitle}</p>
       )}
-    </div>
+    </Reveal>
   );
 }
 
@@ -162,7 +164,7 @@ export default function Home() {
 
       {/* Trust band */}
       <div className="border-y border-hairline-soft bg-surface-soft">
-        <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-8 px-6 py-8 text-center sm:grid-cols-4 lg:px-8">
+        <Reveal className="mx-auto grid max-w-[1280px] grid-cols-2 gap-8 px-6 py-8 text-center sm:grid-cols-4 lg:px-8">
           {[
             ["98%", "applications pass ATS"],
             ["3.8x", "more interview replies"],
@@ -174,12 +176,12 @@ export default function Home() {
               <div className="mt-1 text-sm text-muted">{label}</div>
             </div>
           ))}
-        </div>
+        </Reveal>
       </div>
 
       {/* Features */}
       <section id="features" className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="Features"
             title="Everything you need to get hired faster"
@@ -189,9 +191,9 @@ export default function Home() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card"
+                className="group rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink transition-colors duration-200 group-hover:bg-primary-disabled group-hover:text-primary">
                   <svg
                     className="h-6 w-6"
                     fill="none"
@@ -210,7 +212,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* How it works */}
@@ -218,15 +220,15 @@ export default function Home() {
         id="how-it-works"
         className="border-y border-hairline-soft bg-surface-soft py-16 lg:py-24"
       >
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="How it works"
             title="From job posting to interview in three steps"
           />
           <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-3">
             {steps.map((step, i) => (
-              <div key={step.title} className="relative text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-bold text-primary">
+              <div key={step.title} className="group relative text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-bold text-primary transition-colors duration-200 group-hover:border-primary group-hover:bg-primary-disabled group-hover:text-primary">
                   {i + 1}
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-ink">
@@ -238,19 +240,19 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* ATS showcase */}
       <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
               <span className="text-xs font-semibold uppercase tracking-wide text-primary">
                 ATS analysis
               </span>
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink md:text-4xl">
-                Know your score before a recruiter does
+                <TextReveal as="span" text="Know your score before a recruiter does" />
               </h2>
               <p className="mt-4 max-w-lg text-base leading-relaxed text-muted">
                 Agent Apply parses the job description, compares it against your
@@ -347,12 +349,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Testimonials */}
       <section className="border-t border-hairline-soft bg-surface-soft py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="Testimonials"
             title="Loved by job seekers who stopped guessing"
@@ -387,12 +389,12 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Blog teaser */}
       <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHeading
               eyebrow="From the blog"
@@ -440,14 +442,14 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* CTA band */}
       <section className="px-6 pb-16 lg:px-8 lg:pb-24">
-        <div className="mx-auto max-w-[1280px] rounded-xl bg-surface-soft px-6 py-16 text-center lg:px-12">
+        <Reveal className="mx-auto max-w-[1280px] rounded-xl bg-surface-soft px-6 py-16 text-center lg:px-12">
           <h2 className="text-3xl font-bold tracking-tight text-ink md:text-4xl">
-            Your next interview is one tailored resume away
+            <TextReveal as="span" text="Your next interview is one tailored resume away" />
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed text-muted">
             Upload your resume, paste a job description, and get an
@@ -457,18 +459,18 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               href={isAuthenticated ? "/dashboard" : "/register"}
-              className="inline-flex h-12 items-center rounded-full bg-primary px-7 text-base font-medium text-white transition-colors hover:bg-primary-active"
+              className="btn-grow inline-flex h-12 items-center rounded-full bg-primary px-7 text-base font-medium text-white hover:bg-primary-active"
             >
               Create Your Resume
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink transition-colors hover:bg-canvas"
+              className="btn-grow inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink hover:bg-canvas"
             >
               View Pricing
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

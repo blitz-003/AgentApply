@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 
 export const metadata: Metadata = {
   title: "Pricing | Agent Apply",
@@ -95,22 +97,22 @@ export default function PricingPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <div className="mx-auto max-w-[1280px] px-6 py-16 text-center lg:px-8 lg:py-24">
+        <Reveal className="mx-auto max-w-[1280px] px-6 py-16 text-center lg:px-8 lg:py-24">
           <span className="text-xs font-semibold uppercase tracking-wide text-primary">
             Pricing
           </span>
           <h1 className="mx-auto mt-3 max-w-2xl text-4xl font-bold tracking-tight text-ink md:text-5xl">
-            Pay for callbacks, not for features
+            <TextReveal as="span" text="Pay for callbacks, not for features" />
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted">
             Start free. Upgrade when you&apos;re ready to tailor every single
             application. Cancel anytime.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {plans.map((plan) => (
               <div
@@ -161,10 +163,10 @@ export default function PricingPage() {
                 </ul>
                 <Link
                   href="/register"
-                  className={`mt-8 inline-flex h-12 items-center justify-center rounded-sm px-6 text-base font-medium transition-colors ${
+                  className={`btn-grow mt-8 inline-flex h-12 items-center justify-center rounded-sm px-6 text-base font-medium transition-colors ${
                     plan.highlight
                       ? "bg-primary text-white hover:bg-primary-active"
-                      : "border border-ink text-ink hover:bg-surface-soft"
+                      : "border border-ink text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary"
                   }`}
                 >
                   {plan.cta}
@@ -172,13 +174,13 @@ export default function PricingPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section className="border-y border-hairline-soft bg-surface-soft py-16 lg:py-24">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold tracking-tight text-ink">
-            Compare plans
+            <TextReveal as="span" text="Compare plans" />
           </h2>
           <div className="mt-10 overflow-x-auto rounded-md border border-hairline bg-canvas">
             <table className="w-full min-w-[640px] text-left text-sm">
@@ -216,13 +218,13 @@ export default function PricingPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <section id="faq" className="py-16 lg:py-24">
-        <div className="mx-auto max-w-3xl px-6 lg:px-8">
+        <Reveal className="mx-auto max-w-3xl px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold tracking-tight text-ink">
-            Frequently asked questions
+            <TextReveal as="span" text="Frequently asked questions" />
           </h2>
           <div className="mt-10 space-y-4">
             {faqs.map((faq) => (
@@ -265,7 +267,7 @@ export default function PricingPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

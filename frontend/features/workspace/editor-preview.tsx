@@ -76,7 +76,7 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 viewMode === "resume"
                   ? "bg-canvas text-ink shadow-card"
-                  : "text-muted hover:text-ink"
+                  : "text-muted hover:text-primary"
               }`}
             >
               Resume
@@ -86,7 +86,7 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 viewMode === "coverletter"
                   ? "bg-canvas text-ink shadow-card"
-                  : "text-muted hover:text-ink"
+                  : "text-muted hover:text-primary"
               }`}
             >
               Cover Letter

@@ -6,9 +6,10 @@ import { useState } from "react";
 import { registerSchema, type RegisterFormData } from "@/schemas/auth";
 import { useAuth } from "@/features/auth/auth-context";
 import Link from "next/link";
+import { PasswordInput } from "@/components/password-input";
 
 const inputClass =
-  "w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:border-ink focus:outline-none focus:ring-0";
+  "field-focus w-full rounded-sm border border-hairline bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted-soft focus:outline-none focus:ring-0";
 
 export default function RegisterPage() {
   const { register: registerUser } = useAuth();
@@ -102,9 +103,8 @@ export default function RegisterPage() {
               >
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 {...register("password")}
                 className={inputClass}
                 disabled={isSubmitting}
@@ -123,9 +123,8 @@ export default function RegisterPage() {
               >
                 Confirm Password
               </label>
-              <input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
                 {...register("confirmPassword")}
                 className={inputClass}
                 disabled={isSubmitting}
@@ -140,7 +139,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-sm bg-primary py-3 text-base font-medium text-white transition-colors hover:bg-primary-active disabled:bg-primary-disabled"
+              className="btn-grow w-full rounded-sm bg-primary py-3 text-base font-medium text-white hover:bg-primary-active disabled:bg-primary-disabled"
             >
               {isSubmitting ? "Creating account..." : "Register"}
             </button>

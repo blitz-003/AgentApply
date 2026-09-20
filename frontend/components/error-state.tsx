@@ -30,7 +30,7 @@ export function ErrorState({ message = "Something went wrong", onRetry }: ErrorS
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-6 rounded-sm border border-ink px-4 py-2 text-sm font-medium text-ink hover:bg-surface-soft"
+          className="btn-grow mt-6 rounded-sm border border-ink px-4 py-2 text-sm font-medium text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary"
         >
           Retry
         </button>

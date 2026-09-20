@@ -6,6 +6,7 @@ import { useAuth } from "@/features/auth/auth-context";
 import { getLatestPosts } from "@/lib/blog";
 import { Reveal } from "@/components/motion/reveal";
 import { TextReveal } from "@/components/motion/text-reveal";
+import { AnimatedNumber } from "@/components/motion/animated-number";
 
 const features = [
   {
@@ -164,15 +165,60 @@ export default function Home() {
 
       {/* Trust band */}
       <div className="border-y border-hairline-soft bg-surface-soft">
-        <Reveal className="mx-auto grid max-w-[1280px] grid-cols-2 gap-8 px-6 py-8 text-center sm:grid-cols-4 lg:px-8">
+        <Reveal
+          variant="fade"
+          className="mx-auto grid max-w-[1280px] grid-cols-2 gap-8 px-6 py-8 text-center sm:grid-cols-4 lg:px-8"
+        >
           {[
-            ["98%", "applications pass ATS"],
-            ["3.8x", "more interview replies"],
-            ["12k+", "resumes optimized"],
-            ["4.9/5", "average rating"],
-          ].map(([value, label]) => (
-            <div key={label}>
-              <div className="text-2xl font-bold text-ink">{value}</div>
+            {
+              key: "a",
+              node: (
+                <AnimatedNumber
+                  value={98}
+                  suffix="%"
+                  className="text-2xl font-bold text-ink"
+                />
+              ),
+              label: "applications pass ATS",
+            },
+            {
+              key: "b",
+              node: (
+                <AnimatedNumber
+                  value={3.8}
+                  decimals={1}
+                  suffix="x"
+                  className="text-2xl font-bold text-ink"
+                />
+              ),
+              label: "more interview replies",
+            },
+            {
+              key: "c",
+              node: (
+                <AnimatedNumber
+                  value={12}
+                  suffix="k+"
+                  className="text-2xl font-bold text-ink"
+                />
+              ),
+              label: "resumes optimized",
+            },
+            {
+              key: "d",
+              node: (
+                <AnimatedNumber
+                  value={4.9}
+                  decimals={1}
+                  suffix="/5"
+                  className="text-2xl font-bold text-ink"
+                />
+              ),
+              label: "average rating",
+            },
+          ].map(({ key, node, label }) => (
+            <div key={key}>
+              <div>{node}</div>
               <div className="mt-1 text-sm text-muted">{label}</div>
             </div>
           ))}
@@ -181,35 +227,34 @@ export default function Home() {
 
       {/* Features */}
       <section id="features" className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="blur" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="Features"
             title="Everything you need to get hired faster"
             subtitle="A complete resume workflow — tailored content, ATS analysis, and polished export in one place."
           />
           <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="group rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink transition-colors duration-200 group-hover:bg-primary-disabled group-hover:text-primary">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    {feature.icon}
-                  </svg>
+            {features.map((feature, i) => (
+              <Reveal key={feature.title} variant="fade-up" delay={i * 0.08}>
+                <div className="group h-full rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink transition-colors duration-200 group-hover:bg-primary-disabled group-hover:text-primary">
+                    <svg
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      {feature.icon}
+                    </svg>
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-ink">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-ink">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {feature.description}
-                </p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </Reveal>
@@ -220,24 +265,26 @@ export default function Home() {
         id="how-it-works"
         className="border-y border-hairline-soft bg-surface-soft py-16 lg:py-24"
       >
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="fade" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="How it works"
             title="From job posting to interview in three steps"
           />
           <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-3">
             {steps.map((step, i) => (
-              <div key={step.title} className="group relative text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-bold text-primary transition-colors duration-200 group-hover:border-primary group-hover:bg-primary-disabled group-hover:text-primary">
-                  {i + 1}
+              <Reveal key={step.title} variant="slide-left" delay={i * 0.12}>
+                <div className="group relative text-center">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-bold text-primary transition-colors duration-200 group-hover:border-primary group-hover:bg-primary-disabled group-hover:text-primary">
+                    {i + 1}
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-ink">
+                    {step.title}
+                  </h3>
+                  <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted">
+                    {step.description}
+                  </p>
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-ink">
-                  {step.title}
-                </h3>
-                <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted">
-                  {step.description}
-                </p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </Reveal>
@@ -245,9 +292,9 @@ export default function Home() {
 
       {/* ATS showcase */}
       <section className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="fade" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div>
+            <Reveal variant="slide-right">
               <span className="text-xs font-semibold uppercase tracking-wide text-primary">
                 ATS analysis
               </span>
@@ -288,14 +335,17 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
 
-            <div className="rounded-md border border-hairline-soft bg-canvas p-8 shadow-card">
+            <Reveal
+              variant="slide-left"
+              className="rounded-md border border-hairline-soft bg-canvas p-8 shadow-card"
+            >
               <div className="flex items-center justify-around">
                 <div className="text-center">
                   <div className="text-xs font-medium text-muted">Original</div>
                   <div className="mt-1 text-4xl font-bold text-muted-soft">
-                    58<span className="text-2xl">%</span>
+                    <AnimatedNumber value={58} suffix="%" />
                   </div>
                 </div>
                 <div className="text-2xl text-hairline">&rarr;</div>
@@ -304,7 +354,7 @@ export default function Home() {
                     Optimized
                   </div>
                   <div className="mt-1 text-4xl font-bold text-primary">
-                    96<span className="text-2xl">%</span>
+                    <AnimatedNumber value={96} suffix="%" />
                   </div>
                 </div>
               </div>
@@ -347,46 +397,45 @@ export default function Home() {
                   added to resume
                 </span>
               </div>
-            </div>
+            </Reveal>
           </div>
         </Reveal>
       </section>
 
       {/* Testimonials */}
       <section className="border-t border-hairline-soft bg-surface-soft py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="fade" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="Testimonials"
             title="Loved by job seekers who stopped guessing"
           />
           <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {testimonials.map((t) => (
-              <div
-                key={t.name}
-                className="rounded-md border border-hairline-soft bg-canvas p-6"
-              >
-                <div className="flex items-center gap-1 text-ink">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg
-                      key={i}
-                      className="h-4 w-4 fill-current"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z" />
-                    </svg>
-                  ))}
-                  <span className="ml-2 text-sm font-medium text-muted">
-                    {t.rating}
-                  </span>
+            {testimonials.map((t, i) => (
+              <Reveal key={t.name} variant="zoom" delay={i * 0.1}>
+                <div className="h-full rounded-md border border-hairline-soft bg-canvas p-6">
+                  <div className="flex items-center gap-1 text-ink">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <svg
+                        key={j}
+                        className="h-4 w-4 fill-current"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z" />
+                      </svg>
+                    ))}
+                    <span className="ml-2 text-sm font-medium text-muted">
+                      {t.rating}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-body">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+                  <div className="mt-5 border-t border-hairline-soft pt-4">
+                    <div className="text-sm font-semibold text-ink">{t.name}</div>
+                    <div className="text-xs text-muted">{t.role}</div>
+                  </div>
                 </div>
-                <p className="mt-4 text-sm leading-relaxed text-body">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="mt-5 border-t border-hairline-soft pt-4">
-                  <div className="text-sm font-semibold text-ink">{t.name}</div>
-                  <div className="text-xs text-muted">{t.role}</div>
-                </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </Reveal>
@@ -394,7 +443,7 @@ export default function Home() {
 
       {/* Blog teaser */}
       <section className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="blur" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHeading
               eyebrow="From the blog"
@@ -421,25 +470,26 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {posts.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="group rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card"
-              >
-                <span className="inline-flex rounded-full bg-surface-strong px-3 py-1 text-xs font-medium text-muted">
-                  {post.category}
-                </span>
-                <h3 className="mt-4 text-lg font-semibold text-ink transition-colors group-hover:text-primary">
-                  {post.title}
-                </h3>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">
-                  {post.description}
-                </p>
-                <div className="mt-4 text-xs text-muted-soft">
-                  {post.date} &middot; {post.readTime}
-                </div>
-              </Link>
+            {posts.map((post, i) => (
+              <Reveal key={post.slug} variant="fade-up" delay={i * 0.08}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group flex h-full flex-col rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card"
+                >
+                  <span className="inline-flex rounded-full bg-surface-strong px-3 py-1 text-xs font-medium text-muted">
+                    {post.category}
+                  </span>
+                  <h3 className="mt-4 text-lg font-semibold text-ink transition-colors group-hover:text-primary">
+                    {post.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">
+                    {post.description}
+                  </p>
+                  <div className="mt-4 text-xs text-muted-soft">
+                    {post.date} &middot; {post.readTime}
+                  </div>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </Reveal>
@@ -447,7 +497,10 @@ export default function Home() {
 
       {/* CTA band */}
       <section className="px-6 pb-16 lg:px-8 lg:pb-24">
-        <Reveal className="mx-auto max-w-[1280px] rounded-xl bg-surface-soft px-6 py-16 text-center lg:px-12">
+        <Reveal
+          variant="zoom"
+          className="mx-auto max-w-[1280px] rounded-xl bg-surface-soft px-6 py-16 text-center lg:px-12"
+        >
           <h2 className="text-3xl font-bold tracking-tight text-ink md:text-4xl">
             <TextReveal as="span" text="Your next interview is one tailored resume away" />
           </h2>

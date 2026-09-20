@@ -5,6 +5,59 @@
   --foreground: #222222;
 }
 
+.shadow-card {
+  box-shadow:
+    rgba(0, 0, 0, 0.02) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+    rgba(0, 0, 0, 0.1) 0 4px 8px 0;
+}
+
+.field-focus:focus {
+  border-color: var(--color-primary-disabled);
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(255, 209, 218, 0.65),
+    0 0 20px rgba(255, 56, 92, 0.35),
+    0 0 6px rgba(255, 209, 218, 0.95);
+}
+
+.field-focus:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.btn-grow {
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  will-change: transform;
+}
+
+.btn-grow:hover {
+  transform: scale(1.05);
+}
+
+.btn-grow:active {
+  transform: scale(0.98);
+}
+
+.dot-ping {
+  animation: dot-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.dot-pulse {
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+.dot-core {
+  box-shadow:
+    0 0 6px 2px rgba(255, 56, 92, 0.55),
+    0 0 16px 6px rgba(255, 209, 218, 0.8);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -33,6 +86,11 @@
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 32px;
+
+  --shadow-card:
+    rgba(0, 0, 0, 0.02) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+    rgba(0, 0, 0, 0.1) 0 4px 8px 0;
 
   --animate-fade-in: fade-in 0.6s ease-out both;
 }
@@ -86,57 +144,5 @@
       "Helvetica Neue",
       sans-serif;
     -webkit-font-smoothing: antialiased;
-  }
-
-  .shadow-card {
-    box-shadow:
-      rgba(0, 0, 0, 0.02) 0 0 0 1px,
-      rgba(0, 0, 0, 0.04) 0 2px 6px 0,
-      rgba(0, 0, 0, 0.1) 0 4px 8px 0;
-  }
-
-  .field-focus:focus {
-    border-color: var(--color-primary-disabled);
-    outline: none;
-    box-shadow:
-      rgba(255, 209, 218, 0.6) 0 0 0 3px,
-      rgba(255, 56, 92, 0.15) 0 4px 12px 0;
-  }
-
-  .field-focus:focus:not(:focus-visible) {
-    outline: none;
-  }
-
-  .btn-grow {
-    transition:
-      transform 0.2s ease,
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease,
-      box-shadow 0.2s ease,
-      opacity 0.2s ease;
-    will-change: transform;
-  }
-
-  .btn-grow:hover {
-    transform: scale(1.05);
-  }
-
-  .btn-grow:active {
-    transform: scale(0.98);
-  }
-
-  .dot-ping {
-    animation: dot-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-
-  .dot-pulse {
-    animation: dot-pulse 2s ease-in-out infinite;
-  }
-
-  .dot-core {
-    box-shadow:
-      0 0 6px 2px rgba(255, 56, 92, 0.55),
-      0 0 16px 6px rgba(255, 209, 218, 0.8);
   }
 }

@@ -97,7 +97,10 @@ export default function PricingPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <Reveal className="mx-auto max-w-[1280px] px-6 py-16 text-center lg:px-8 lg:py-24">
+        <Reveal
+          variant="fade"
+          className="mx-auto max-w-[1280px] px-6 py-16 text-center lg:px-8 lg:py-24"
+        >
           <span className="text-xs font-semibold uppercase tracking-wide text-primary">
             Pricing
           </span>
@@ -112,17 +115,17 @@ export default function PricingPage() {
       </section>
 
       <section className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="fade-up" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative flex flex-col rounded-md border p-8 transition-shadow duration-200 ${
-                  plan.highlight
-                    ? "border-primary bg-surface-soft shadow-card"
-                    : "border-hairline-soft bg-canvas hover:shadow-card"
-                }`}
-              >
+            {plans.map((plan, i) => (
+              <Reveal key={plan.name} variant="zoom" delay={i * 0.1}>
+                <div
+                  className={`relative flex h-full flex-col rounded-md border p-8 transition-shadow duration-200 ${
+                    plan.highlight
+                      ? "border-primary bg-surface-soft shadow-card"
+                      : "border-hairline-soft bg-canvas hover:shadow-card"
+                  }`}
+                >
                 {plan.highlight && (
                   <span className="absolute -top-3 left-8 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">
                     Most popular
@@ -171,14 +174,15 @@ export default function PricingPage() {
                 >
                   {plan.cta}
                 </Link>
-              </div>
+                  </div>
+                </Reveal>
             ))}
           </div>
         </Reveal>
       </section>
 
       <section className="border-y border-hairline-soft bg-surface-soft py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="slide-right" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold tracking-tight text-ink">
             <TextReveal as="span" text="Compare plans" />
           </h2>
@@ -222,38 +226,39 @@ export default function PricingPage() {
       </section>
 
       <section id="faq" className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-3xl px-6 lg:px-8">
+        <Reveal variant="fade" className="mx-auto max-w-3xl px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold tracking-tight text-ink">
             <TextReveal as="span" text="Frequently asked questions" />
           </h2>
           <div className="mt-10 space-y-4">
-            {faqs.map((faq) => (
-              <details
-                key={faq.q}
-                className="group rounded-md border border-hairline-soft bg-canvas p-6"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-medium text-ink">
-                  {faq.q}
-                  <span className="text-muted transition-transform group-open:rotate-45">
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm leading-relaxed text-muted">
-                  {faq.a}
-                </p>
-              </details>
+            {faqs.map((faq, i) => (
+              <Reveal key={faq.q} variant="fade-up" delay={i * 0.06}>
+                <details
+                  className="group rounded-md border border-hairline-soft bg-canvas p-6"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-medium text-ink">
+                    {faq.q}
+                    <span className="text-muted transition-transform group-open:rotate-45">
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">
+                    {faq.a}
+                  </p>
+                </details>
+              </Reveal>
             ))}
           </div>
           <div className="mt-12 text-center">

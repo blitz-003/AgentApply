@@ -14,7 +14,10 @@ export default function BlogPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <Reveal className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
+        <Reveal
+          variant="fade"
+          className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24"
+        >
           <span className="text-xs font-semibold uppercase tracking-wide text-primary">
             Blog
           </span>
@@ -29,14 +32,14 @@ export default function BlogPage() {
       </section>
 
       <section className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="fade" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {blogPosts.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="group flex flex-col rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-card"
-              >
+            {blogPosts.map((post, i) => (
+              <Reveal key={post.slug} variant="fade-up" delay={i * 0.08}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group flex h-full flex-col rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-card"
+                >
                 <div className="flex items-center justify-between">
                   <span className="inline-flex rounded-full bg-surface-strong px-3 py-1 text-xs font-medium text-muted">
                     {post.category}
@@ -72,6 +75,7 @@ export default function BlogPage() {
                   </span>
                 </div>
               </Link>
+              </Reveal>
             ))}
           </div>
         </Reveal>

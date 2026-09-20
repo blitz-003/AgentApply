@@ -37,7 +37,10 @@ export default function AboutPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <Reveal className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
+        <Reveal
+          variant="fade"
+          className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24"
+        >
           <div className="max-w-2xl">
             <span className="text-xs font-semibold uppercase tracking-wide text-primary">
               About us
@@ -62,23 +65,26 @@ export default function AboutPage() {
       </section>
 
       <section className="py-16 lg:py-24">
-        <Reveal className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <Reveal variant="fade" className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight text-ink">
             <TextReveal as="span" text="What we believe" />
           </h2>
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {values.map((value) => (
-              <div
+            {values.map((value, i) => (
+              <Reveal
                 key={value.title}
-                className="rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-card"
+                variant={i % 2 === 0 ? "slide-right" : "slide-left"}
+                delay={i * 0.08}
               >
-                <h3 className="text-lg font-semibold text-ink">
-                  {value.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {value.description}
-                </p>
-              </div>
+                <div className="h-full rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-card">
+                  <h3 className="text-lg font-semibold text-ink">
+                    {value.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {value.description}
+                  </p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </Reveal>

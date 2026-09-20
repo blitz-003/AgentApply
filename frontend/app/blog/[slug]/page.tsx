@@ -32,7 +32,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="bg-canvas">
-      <Reveal className="mx-auto max-w-3xl px-6 py-16 lg:py-20">
+      <Reveal variant="fade" className="mx-auto max-w-3xl px-6 py-16 lg:py-20">
         <Link
           href="/blog"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-primary"

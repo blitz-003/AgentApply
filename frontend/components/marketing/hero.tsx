@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/auth-context";
 import { Reveal } from "@/components/motion/reveal";
 import { TextReveal } from "@/components/motion/text-reveal";
+import { AnimatedNumber } from "@/components/motion/animated-number";
 
 const roles = [
   "Senior Frontend Developer",
@@ -83,7 +84,7 @@ export function Hero() {
   return (
     <section className="bg-canvas">
       <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
-        <Reveal delay={0}>
+        <Reveal variant="fade-up" delay={0}>
           <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-xs font-medium text-muted">
             <span className="relative flex h-2.5 w-2.5 items-center justify-center">
               <span className="dot-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-primary/60" />
@@ -140,23 +141,37 @@ export function Hero() {
           </div>
           <div className="mt-10 flex items-center gap-8">
             <div>
-              <div className="text-2xl font-bold text-ink">12k+</div>
+              <AnimatedNumber
+                value={12}
+                suffix="k+"
+                className="text-2xl font-bold text-ink"
+              />
               <div className="text-sm text-muted">resumes optimized</div>
             </div>
             <div className="h-10 w-px bg-hairline" />
             <div>
-              <div className="text-2xl font-bold text-ink">3.8x</div>
+              <AnimatedNumber
+                value={3.8}
+                decimals={1}
+                suffix="x"
+                className="text-2xl font-bold text-ink"
+              />
               <div className="text-sm text-muted">more interview replies</div>
             </div>
             <div className="h-10 w-px bg-hairline" />
             <div>
-              <div className="text-2xl font-bold text-ink">4.9/5</div>
+              <AnimatedNumber
+                value={4.9}
+                decimals={1}
+                suffix="/5"
+                className="text-2xl font-bold text-ink"
+              />
               <div className="text-sm text-muted">user rating</div>
             </div>
           </div>
         </Reveal>
 
-        <Reveal delay={0.15}>
+        <Reveal variant="slide-left" delay={0.15}>
           <div className="rounded-md bg-white p-1 shadow-card">
             <div className="flex items-center gap-1.5 rounded-t-sm bg-surface-strong px-4 py-3">
               <span className="h-2.5 w-2.5 rounded-full bg-hairline" />

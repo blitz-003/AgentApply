@@ -175,7 +175,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
               className={`rounded-full border px-6 py-3 text-sm font-medium transition-colors ${
                 hasJobDescription === true
                   ? "border-primary bg-primary text-white"
-                  : "border-hairline text-muted hover:border-primary hover:bg-primary-disabled hover:text-primary"
+                  : "border-hairline text-muted hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow"
               }`}
             >
               Paste a Job Description
@@ -185,7 +185,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
               className={`rounded-full border px-6 py-3 text-sm font-medium transition-colors ${
                 hasJobDescription === false
                   ? "border-primary bg-primary text-white"
-                  : "border-hairline text-muted hover:border-primary hover:bg-primary-disabled hover:text-primary"
+                  : "border-hairline text-muted hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow"
               }`}
             >
               Just a Target Role

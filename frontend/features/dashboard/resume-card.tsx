@@ -42,7 +42,7 @@ export function ResumeCard({ resume, onDelete, isDeleting }: ResumeCardProps) {
         <button
           onClick={() => onDelete(resume.id)}
           disabled={isDeleting}
-          className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+          className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
         >
           Delete
         </button>

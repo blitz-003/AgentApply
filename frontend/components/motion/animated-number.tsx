@@ -17,7 +17,7 @@ export function AnimatedNumber({
   decimals = 0,
   prefix = "",
   suffix = "",
-  duration = 1600,
+  duration = 4800,
   className,
 }: AnimatedNumberProps) {
   const ref = useRef<HTMLSpanElement>(null);

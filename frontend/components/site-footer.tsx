@@ -88,7 +88,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="btn-grow flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-primary hover:bg-primary-disabled hover:text-primary"
+                  className="btn-grow flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow"
                 >
                   {social.icon}
                 </a>

@@ -41,7 +41,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary-disabled hover:text-primary"
+              className="rounded-full px-3 py-2 text-sm font-medium text-muted transition hover:bg-white hover:text-primary hover:shadow-glow"
             >
               {link.label}
             </Link>
@@ -56,7 +56,7 @@ export function Navbar() {
               </span>
               <button
                 onClick={logout}
-                className="btn-grow rounded-sm border border-ink bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:bg-primary-disabled hover:text-primary"
+                className="btn-grow rounded-sm border border-ink bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow"
               >
                 Logout
               </button>
@@ -65,7 +65,7 @@ export function Navbar() {
             <>
               <Link
                 href="/login"
-                className="hidden rounded-full px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary-disabled hover:text-primary sm:block"
+                className="hidden rounded-full px-3 py-2 text-sm font-medium text-muted transition hover:bg-white hover:text-primary hover:shadow-glow sm:block"
               >
                 Login
               </Link>
@@ -123,7 +123,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-primary-disabled hover:text-primary"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition hover:bg-white hover:text-primary hover:shadow-glow"
               >
                 {link.label}
               </Link>
@@ -136,7 +136,7 @@ export function Navbar() {
                     setMenuOpen(false);
                     logout();
                   }}
-                  className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-muted transition-colors hover:bg-primary-disabled hover:text-primary"
+                  className="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-muted transition hover:bg-white hover:text-primary hover:shadow-glow"
                 >
                   Logout ({user?.name})
                 </button>
@@ -146,7 +146,7 @@ export function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-primary-disabled hover:text-primary"
+className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink transition hover:bg-white hover:text-primary hover:shadow-glow"
                 >
                   Login
                 </Link>

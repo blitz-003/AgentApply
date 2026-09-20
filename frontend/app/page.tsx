@@ -176,7 +176,7 @@ export default function Home() {
                 <AnimatedNumber
                   value={98}
                   suffix="%"
-                  className="text-2xl font-bold text-ink"
+                  className="text-4xl font-bold text-ink md:text-5xl"
                 />
               ),
               label: "applications pass ATS",
@@ -188,7 +188,7 @@ export default function Home() {
                   value={3.8}
                   decimals={1}
                   suffix="x"
-                  className="text-2xl font-bold text-ink"
+                  className="text-4xl font-bold text-ink md:text-5xl"
                 />
               ),
               label: "more interview replies",
@@ -199,7 +199,7 @@ export default function Home() {
                 <AnimatedNumber
                   value={12}
                   suffix="k+"
-                  className="text-2xl font-bold text-ink"
+                  className="text-4xl font-bold text-ink md:text-5xl"
                 />
               ),
               label: "resumes optimized",
@@ -211,7 +211,7 @@ export default function Home() {
                   value={4.9}
                   decimals={1}
                   suffix="/5"
-                  className="text-2xl font-bold text-ink"
+                  className="text-4xl font-bold text-ink md:text-5xl"
                 />
               ),
               label: "average rating",
@@ -219,7 +219,7 @@ export default function Home() {
           ].map(({ key, node, label }) => (
             <div key={key}>
               <div>{node}</div>
-              <div className="mt-1 text-sm text-muted">{label}</div>
+              <div className="mt-1 text-base text-muted">{label}</div>
             </div>
           ))}
         </Reveal>
@@ -236,8 +236,8 @@ export default function Home() {
           <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
               <Reveal key={feature.title} variant="fade-up" delay={i * 0.08}>
-                <div className="group h-full rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink transition-colors duration-200 group-hover:bg-primary-disabled group-hover:text-primary">
+                <div className="group h-full rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-glow">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink transition-colors duration-200 group-hover:bg-white group-hover:text-primary group-hover:shadow-glow">
                     <svg
                       className="h-6 w-6"
                       fill="none"
@@ -274,7 +274,7 @@ export default function Home() {
             {steps.map((step, i) => (
               <Reveal key={step.title} variant="slide-left" delay={i * 0.12}>
                 <div className="group relative text-center">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-bold text-primary transition-colors duration-200 group-hover:border-primary group-hover:bg-primary-disabled group-hover:text-primary">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-bold text-primary transition-colors duration-200 group-hover:bg-white group-hover:text-primary group-hover:shadow-glow">
                     {i + 1}
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-ink">
@@ -412,7 +412,7 @@ export default function Home() {
           <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
             {testimonials.map((t, i) => (
               <Reveal key={t.name} variant="zoom" delay={i * 0.1}>
-                <div className="h-full rounded-md border border-hairline-soft bg-canvas p-6">
+                <div className="h-full rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-glow">
                   <div className="flex items-center gap-1 text-ink">
                     {Array.from({ length: 5 }).map((_, j) => (
                       <svg
@@ -474,7 +474,7 @@ export default function Home() {
               <Reveal key={post.slug} variant="fade-up" delay={i * 0.08}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group flex h-full flex-col rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-card"
+                  className="group flex h-full flex-col rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-glow"
                 >
                   <span className="inline-flex rounded-full bg-surface-strong px-3 py-1 text-xs font-medium text-muted">
                     {post.category}

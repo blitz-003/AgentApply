@@ -24,7 +24,7 @@ export function TextReveal({
   className,
   as = "span",
   delay = 0,
-  stagger = 0.06,
+  stagger = 0.09,
 }: TextRevealProps) {
   const MotionTag = motionTags[as];
   const words = text.split(" ");
@@ -42,7 +42,7 @@ export function TextReveal({
       y: "0%",
       opacity: 1,
       filter: "blur(0px)",
-      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
     },
   };
 

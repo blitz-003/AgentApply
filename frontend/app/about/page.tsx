@@ -76,7 +76,7 @@ export default function AboutPage() {
                 variant={i % 2 === 0 ? "slide-right" : "slide-left"}
                 delay={i * 0.08}
               >
-                <div className="h-full rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-card">
+                <div className="h-full rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-glow">
                   <h3 className="text-lg font-semibold text-ink">
                     {value.title}
                   </h3>

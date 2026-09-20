@@ -43,7 +43,7 @@ export function Reveal({
   className,
   variant = "fade-up",
   delay = 0,
-  duration = 0.6,
+  duration = 1.8,
   once = false,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);

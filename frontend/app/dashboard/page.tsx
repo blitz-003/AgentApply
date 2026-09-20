@@ -119,7 +119,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => setPage(page - 1)}
                     disabled={page === 1}
-                    className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+                    className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
                   >
                     Previous
                   </button>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => setPage(page + 1)}
                     disabled={page === totalPages}
-                    className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+                    className="btn-grow rounded-sm border border-hairline px-3 py-1.5 text-sm font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
                   >
                     Next
                   </button>
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                   setShowCreateDialog(false);
                   setNewResumeTitle("");
                 }}
-                className="btn-grow rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary"
+                className="btn-grow rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow"
               >
                 Cancel
               </button>
@@ -190,7 +190,7 @@ export default function DashboardPage() {
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setDeleteId(null)}
-                className="btn-grow rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary"
+                className="btn-grow rounded-sm border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow"
               >
                 Cancel
               </button>

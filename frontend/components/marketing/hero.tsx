@@ -55,7 +55,7 @@ function useTypingEffect() {
   return { typed, keywords: keywordSets[roles[roleIndex]] ?? [] };
 }
 
-function useScoreAnimation(target: number, duration = 2600) {
+function useScoreAnimation(target: number, duration = 5200) {
   const [score, setScore] = useState(54);
 
   useEffect(() => {
@@ -82,8 +82,8 @@ export function Hero() {
   const circumference = 2 * Math.PI * radius;
 
   return (
-    <section className="bg-canvas">
-      <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
+    <section className="flex min-h-[calc(100svh-80px)] items-center bg-canvas">
+      <div className="mx-auto grid max-w-[1280px] items-center gap-14 px-6 py-14 lg:grid-cols-2 lg:px-8 lg:py-16">
         <Reveal variant="fade-up" delay={0}>
           <span className="inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 text-xs font-medium text-muted">
             <span className="relative flex h-2.5 w-2.5 items-center justify-center">
@@ -101,11 +101,10 @@ export function Hero() {
             />
             <TextReveal
               as="span"
-              text="interview"
+              text="interview."
               className="block text-primary"
               delay={0.9}
             />
-            .
           </h1>
           <p className="mt-5 max-w-lg text-base leading-relaxed text-body md:text-lg">
             Paste a job description, upload your resume, and let AI tailor your
@@ -134,7 +133,7 @@ export function Hero() {
             </Link>
             <Link
               href="#how-it-works"
-              className="btn-grow inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary"
+              className="btn-grow inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow"
             >
               See how it works
             </Link>

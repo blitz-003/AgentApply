@@ -38,7 +38,7 @@ export default function BlogPage() {
               <Reveal key={post.slug} variant="fade-up" delay={i * 0.08}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group flex h-full flex-col rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-card"
+                  className="group flex h-full flex-col rounded-md border border-hairline-soft p-6 transition-shadow duration-200 hover:shadow-glow"
                 >
                 <div className="flex items-center justify-between">
                   <span className="inline-flex rounded-full bg-surface-strong px-3 py-1 text-xs font-medium text-muted">

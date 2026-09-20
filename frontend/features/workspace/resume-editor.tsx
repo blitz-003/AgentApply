@@ -319,7 +319,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 <button
                   onClick={handleImproveSummary}
                   disabled={improveSummaryMutation.isPending}
-                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
                 >
                   {improveSummaryMutation.isPending ? "Improving..." : "Improve with AI"}
                 </button>
@@ -342,7 +342,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 {experience.length < 3 && (
                   <button
                     onClick={handleAddExperience}
-                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary"
+                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow"
                   >
                     + Add
                   </button>
@@ -434,7 +434,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                     <button
                       onClick={() => handleImproveExperience(index)}
                       disabled={improvingExpIndex !== null}
-                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
                     >
                       {improvingExpIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
@@ -457,7 +457,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 {projects.length < 3 && (
                   <button
                     onClick={handleAddProject}
-                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary"
+                    className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow"
                   >
                     + Add
                   </button>
@@ -534,7 +534,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                     <button
                       onClick={() => handleImproveProject(index)}
                       disabled={improvingProjIndex !== null}
-                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+                      className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
                     >
                       {improvingProjIndex === index ? "Improving..." : "Improve with AI"}
                     </button>
@@ -557,7 +557,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 <button
                   onClick={handleSuggestSkills}
                   disabled={suggestSkillsMutation.isPending}
-                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary disabled:opacity-50"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow disabled:opacity-50"
                 >
                   {suggestSkillsMutation.isPending ? "Suggesting..." : "Suggest Skills"}
                 </button>
@@ -589,7 +589,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 />
                 <button
                   onClick={handleAddSkill}
-                  className="rounded-sm border border-hairline px-3 py-2 text-sm font-medium text-ink hover:bg-primary-disabled hover:text-primary"
+                  className="rounded-sm border border-hairline px-3 py-2 text-sm font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow"
                 >
                   Add
                 </button>
@@ -604,7 +604,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                 </h2>
                 <button
                   onClick={handleAddEducation}
-                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-primary-disabled hover:text-primary"
+                  className="rounded-sm border border-hairline px-3 py-1.5 text-xs font-medium text-ink hover:bg-white hover:text-primary hover:shadow-glow"
                 >
                   + Add
                 </button>

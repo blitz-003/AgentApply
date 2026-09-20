@@ -123,7 +123,7 @@ export default function PricingPage() {
                   className={`relative flex h-full flex-col rounded-md border p-8 transition-shadow duration-200 ${
                     plan.highlight
                       ? "border-primary bg-surface-soft shadow-card"
-                      : "border-hairline-soft bg-canvas hover:shadow-card"
+                      : "border-hairline-soft bg-canvas hover:shadow-glow"
                   }`}
                 >
                 {plan.highlight && (
@@ -169,7 +169,7 @@ export default function PricingPage() {
                   className={`btn-grow mt-8 inline-flex h-12 items-center justify-center rounded-sm px-6 text-base font-medium transition-colors ${
                     plan.highlight
                       ? "bg-primary text-white hover:bg-primary-active"
-                      : "border border-ink text-ink hover:border-primary hover:bg-primary-disabled hover:text-primary"
+                      : "border border-ink text-ink hover:border-primary hover:bg-white hover:text-primary hover:shadow-glow"
                   }`}
                 >
                   {plan.cta}

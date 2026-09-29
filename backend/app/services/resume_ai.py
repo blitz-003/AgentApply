@@ -4,6 +4,14 @@ import logging
 from app.infrastructure.llm_client import llm_client
 from app.infrastructure.prompt_builder import prompt_builder
 from app.infrastructure.response_parser import response_parser
+from app.infrastructure.response_schemas import (
+    EXPERIENCE_SCHEMA,
+    GENERATE_SCHEMA,
+    PROJECT_SCHEMA,
+    SKILLS_SCHEMA,
+    SUMMARY_SCHEMA,
+    structured_format,
+)
 from app.repositories.ats_analysis import ats_analysis_repository
 from app.repositories.cover_letter import cover_letter_repository
 from app.repositories.resume import resume_repository
@@ -50,11 +58,19 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_generate_prompt(
             resume_data, job_description, target_role, raw_text=raw_text or None
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_generate", GENERATE_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
 
         keywords = parsed.get("keywords_extracted", [])
-        keyword_categories = parsed.get("keyword_categories", {}) or {}
+        keyword_categories = {
+            item["keyword"]: item["category"]
+            for item in parsed.get("keyword_categories", []) or []
+            if isinstance(item, dict) and item.get("keyword") and item.get("category")
+        }
         generated_resume_data = parsed.get("resume_data", {})
         ats = parsed.get("ats_analysis", {}) or {}
 
@@ -131,7 +147,11 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_improve_summary_prompt(
             summary, resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_summary", SUMMARY_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
 
         return SummaryResponse(summary=parsed.get("summary", ""))
@@ -145,7 +165,11 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_rewrite_summary_prompt(
             summary, resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_summary", SUMMARY_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
 
         return SummaryResponse(summary=parsed.get("summary", ""))
@@ -162,7 +186,11 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_generate_experience_prompt(
             experience.model_dump(), resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_experience", EXPERIENCE_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
         exp = parsed.get("experience", {})
 
@@ -186,7 +214,11 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_improve_experience_prompt(
             experience.model_dump(), resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_experience", EXPERIENCE_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
         exp = parsed.get("experience", {})
 
@@ -210,7 +242,11 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_improve_project_prompt(
             project.model_dump(), resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_project", PROJECT_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
         proj = parsed.get("project", {})
 
@@ -233,7 +269,11 @@ class ResumeAIOrchestrator:
         system_prompt, user_prompt = prompt_builder.build_suggest_skills_prompt(
             skills, resume_data
         )
-        raw_response = llm_client.chat(system_prompt, user_prompt, response_format={"type": "json_object"})
+        raw_response = llm_client.chat(
+            system_prompt,
+            user_prompt,
+            response_format=structured_format("resume_skills", SKILLS_SCHEMA),
+        )
         parsed = response_parser.parse_json(raw_response)
 
         return SkillsResponse(skills=parsed.get("skills", []))

@@ -32,9 +32,16 @@ class LLMClient:
             "model": settings.ai_model,
             "messages": messages,
             "temperature": 0.7,
+            "max_tokens": settings.ai_max_tokens,
         }
         if response_format:
-            kwargs["response_format"] = response_format
+            if (
+                response_format.get("type") == "json_schema"
+                and "gpt-oss" not in settings.ai_model
+            ):
+                kwargs["response_format"] = {"type": "json_object"}
+            else:
+                kwargs["response_format"] = response_format
         try:
             response = self.client.chat.completions.create(**kwargs)
             content = response.choices[0].message.content

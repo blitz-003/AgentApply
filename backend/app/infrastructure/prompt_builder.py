@@ -46,6 +46,16 @@ KEYWORD_INTEGRATION_RULE = (
     "The backend will automatically detect and list any keywords still missing."
 )
 
+COMPLETENESS_RULE = (
+    "COMPLETENESS REQUIREMENT — The output IS the final product; never return empty sections. "
+    "If a section (experience, projects, education, skills, achievements) is missing or near-empty "
+    "in the user's data, GENERATE realistic, role-appropriate content matching the target role. "
+    "Write every summary sentence, every bullet point, and every cover letter paragraph at FULL "
+    "length — expand all content to meet the limits below; never truncate or drop a section. "
+    "NEVER use placeholders such as '[Company]', '[Manager]', '[Year]', or ellipses. "
+    "Fully spell out each bullet, paragraph, and letter."
+)
+
 
 class PromptBuilder:
     def build_parse_resume_prompt(
@@ -99,6 +109,7 @@ class PromptBuilder:
                 "Finally evaluate the OPTIMIZED resume and assign overall_score (0-100, should be 90-100). "
                 f"{STAR_RULES} "
                 f"{ONE_PAGE_BUDGET} "
+                f"{COMPLETENESS_RULE} "
                 "Also generate a tailored cover letter and ATS analysis. "
                 "The cover letter MUST be exactly 5 paragraphs, one per section below, totaling exactly 1200 words. "
                 "Separate each paragraph with a blank line so they have clear spacing between them. "
@@ -116,7 +127,7 @@ class PromptBuilder:
                 f"{JSON_INSTRUCTIONS} "
                 "The response JSON must have exactly these keys (IN THIS ORDER): "
                 '"keywords_extracted" (list of strings, ALL skills/technologies/tools extracted from the job description or target role), '
-                '"keyword_categories" (object mapping each keyword to its skill category name), '
+                '"keyword_categories" (list of objects with keys "keyword" and "category", mapping each keyword to its skill category name), '
                 "e.g. {\"React\": \"Frontend\", \"AWS\": \"Cloud/DevOps\", \"Python\": \"Backend\"}, "
                 '"resume_data" (object with keys: '
                 '"personal_info" (object with keys "name", "email", "phone", "location", "linkedin", "github"), '
@@ -126,7 +137,7 @@ class PromptBuilder:
                 '"skills" (list of objects with keys "category" (string) and "items" (list of strings)), e.g. [{"category": "Frontend", "items": ["React", "TypeScript"]}, {"category": "Backend", "items": ["Node.js", "Python"]}], '
                 '"projects" (list of objects with keys "title", "description" (string with \\n separated bullet points), "start_date", "end_date"), '
                 '"achievements" (list of strings, add exactly 2 notable achievements in single-line format), '
-                '"languages" (list of strings, add languages with proficiency if any)), '
+                '"languages" (list of strings, add languages with proficiency if any), "certifications" (list of strings, add certifications if any)), '
                 '"cover_letter" (object with key "content"), '
                 '"ats_analysis" (object with keys "previous_score" (int 0-100), "overall_score" (int 0-100), '
                 '"strengths" (list of strings), "weaknesses" (list of strings), '
@@ -145,6 +156,7 @@ class PromptBuilder:
                 "Finally evaluate the OPTIMIZED resume and assign overall_score (0-100, should be 90-100). "
                 f"{STAR_RULES} "
                 f"{ONE_PAGE_BUDGET} "
+                f"{COMPLETENESS_RULE} "
                 "Also generate a tailored cover letter and ATS analysis. "
                 "The cover letter MUST be exactly 5 paragraphs, one per section below, totaling exactly 1200 words. "
                 "Separate each paragraph with a blank line so they have clear spacing between them. "
@@ -162,7 +174,7 @@ class PromptBuilder:
                 f"{JSON_INSTRUCTIONS} "
                 "The response JSON must have exactly these keys (IN THIS ORDER): "
                 '"keywords_extracted" (list of strings, ALL skills/technologies/tools extracted from the job description or target role), '
-                '"keyword_categories" (object mapping each keyword to its skill category name), '
+                '"keyword_categories" (list of objects with keys "keyword" and "category", mapping each keyword to its skill category name), '
                 "e.g. {\"React\": \"Frontend\", \"AWS\": \"Cloud/DevOps\", \"Python\": \"Backend\"}, "
                 '"resume_data" (object with keys: '
                 '"personal_info" (object with keys "name", "email", "phone", "location", "linkedin", "github"), '
@@ -172,7 +184,7 @@ class PromptBuilder:
                 '"skills" (list of objects with keys "category" (string) and "items" (list of strings)), e.g. [{"category": "Frontend", "items": ["React", "TypeScript"]}, {"category": "Backend", "items": ["Node.js", "Python"]}], '
                 '"projects" (list of objects with keys "title", "description" (string with \\n separated bullet points), "start_date", "end_date"), '
                 '"achievements" (list of strings, add exactly 2 notable achievements in single-line format), '
-                '"languages" (list of strings, add languages with proficiency if any)), '
+                '"languages" (list of strings, add languages with proficiency if any), "certifications" (list of strings, add certifications if any)), '
                 '"cover_letter" (object with key "content"), '
                 '"ats_analysis" (object with keys "previous_score" (int 0-100), "overall_score" (int 0-100), '
                 '"strengths" (list of strings), "weaknesses" (list of strings), '

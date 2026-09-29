@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     ai_base_url: str = "https://api.groq.com/openai/v1"
     ai_api_key: str = ""
     ai_model: str = "llama-3.3-70b-versatile"
+    ai_max_tokens: int = 32768
     ai_app_name: str = "Agent Apply"
     ai_app_url: str = "http://localhost:3000"
     allowed_origins: list[str] = ["http://localhost:3000"]

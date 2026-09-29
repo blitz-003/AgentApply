@@ -36,16 +36,42 @@ class ResponseParser:
         except json.JSONDecodeError:
             pass
 
-        first_brace = cleaned.find("{")
-        last_brace = cleaned.rfind("}")
-        if first_brace != -1 and last_brace > first_brace:
+        for match in re.finditer(r"\{", cleaned):
+            candidate = ResponseParser._extract_json_object(cleaned, match.start())
+            if candidate is None:
+                continue
             try:
-                return json.loads(cleaned[first_brace:last_brace + 1])
+                return json.loads(candidate)
             except json.JSONDecodeError:
-                pass
+                continue
 
         logger.error(f"Failed to parse AI response (first 500 chars): {cleaned[:500]}")
         raise ValueError(f"Failed to parse AI response as JSON")
+
+    @staticmethod
+    def _extract_json_object(text: str, start: int) -> str | None:
+        in_string = False
+        escaped = False
+        depth = 0
+        for i in range(start, len(text)):
+            ch = text[i]
+            if in_string:
+                if escaped:
+                    escaped = False
+                elif ch == "\\":
+                    escaped = True
+                elif ch == '"':
+                    in_string = False
+                continue
+            if ch == '"':
+                in_string = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[start : i + 1]
+        return None
 
 
 response_parser = ResponseParser()

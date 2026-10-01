@@ -30,7 +30,7 @@ export function EmptyState({ onCreateResume }: EmptyStateProps) {
       </p>
       <button
         onClick={onCreateResume}
-        className="mt-6 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-active"
+        className="mt-6 rounded-sm bg-primary px-4 py-2 text-sm font-medium text-white transition-shadow hover:bg-primary-active hover:shadow-glow"
       >
         Create Resume
       </button>

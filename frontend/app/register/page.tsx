@@ -37,7 +37,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-surface-soft px-6 py-24">
+    <div className="flex flex-1 items-center justify-center bg-surface-soft px-6 py-12">
       <div className="w-full max-w-md">
         <div className="rounded-md border border-hairline bg-canvas p-8 shadow-card">
           <div className="mb-8 text-center">
@@ -48,7 +48,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="mb-5 rounded-sm border border-hairline bg-surface-soft px-4 py-3 text-sm text-error">
+            <div className="mb-5 rounded-sm border border-hairline bg-canvas px-4 py-3 text-sm text-primary">
               {error}
             </div>
           )}
@@ -70,7 +70,7 @@ export default function RegisterPage() {
                 disabled={isSubmitting}
               />
               {errors.name && (
-                <p className="mt-1 text-sm text-error">
+                <p className="mt-1 text-sm text-primary">
                   {errors.name.message}
                 </p>
               )}
@@ -92,7 +92,7 @@ export default function RegisterPage() {
                 disabled={isSubmitting}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-error">
+                <p className="mt-1 text-sm text-primary">
                   {errors.email.message}
                 </p>
               )}
@@ -113,7 +113,7 @@ export default function RegisterPage() {
                 disabled={isSubmitting}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-error">
+                <p className="mt-1 text-sm text-primary">
                   {errors.password.message}
                 </p>
               )}
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                 disabled={isSubmitting}
               />
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-error">
+                <p className="mt-1 text-sm text-primary">
                   {errors.confirmPassword.message}
                 </p>
               )}
@@ -148,14 +148,17 @@ export default function RegisterPage() {
               {isSubmitting ? "Creating account..." : "Register"}
             </button>
           </form>
-        </div>
 
-        <p className="mt-6 text-center text-sm text-muted">
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-ink hover:text-primary">
-            Login
-          </Link>
-        </p>
+          <p className="mt-6 border-t border-hairline pt-6 text-center text-sm text-muted">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-medium text-ink hover:text-primary"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

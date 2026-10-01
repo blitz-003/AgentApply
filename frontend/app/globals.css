@@ -38,6 +38,7 @@
 
 .btn-grow:hover {
   transform: scale(1.05);
+  box-shadow: var(--shadow-glow);
 }
 
 .btn-grow:active {

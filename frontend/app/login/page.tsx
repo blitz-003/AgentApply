@@ -48,7 +48,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="mb-5 rounded-sm border border-hairline bg-surface-soft px-4 py-3 text-sm text-error">
+            <div className="mb-5 rounded-sm border border-hairline bg-canvas px-4 py-3 text-sm text-primary">
               {error}
             </div>
           )}
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 disabled={isSubmitting}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-error">
+                <p className="mt-1 text-sm text-primary">
                   {errors.email.message}
                 </p>
               )}
@@ -91,7 +91,7 @@ export default function LoginPage() {
                 disabled={isSubmitting}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-error">
+                <p className="mt-1 text-sm text-primary">
                   {errors.password.message}
                 </p>
               )}

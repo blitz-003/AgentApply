@@ -80,7 +80,7 @@ export function Navbar() {
           <button
             onClick={() => setMenuOpen((open) => !open)}
             aria-label="Toggle menu"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-strong text-ink md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-strong text-ink transition-shadow hover:shadow-glow md:hidden"
           >
             {menuOpen ? (
               <svg

@@ -57,7 +57,7 @@ export function TextReveal({
       {words.map((wordText, i) => (
         <span
           key={i}
-          className="inline-block overflow-hidden align-bottom"
+          className="inline-block overflow-hidden align-bottom pb-[0.25em] -mb-[0.25em]"
         >
           <motion.span className="inline-block will-change-transform" variants={word}>
             {wordText}

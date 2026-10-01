@@ -237,7 +237,7 @@ export default function Home() {
             {features.map((feature, i) => (
               <Reveal key={feature.title} variant="fade-up" delay={i * 0.08}>
                 <div className="group h-full rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-glow">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-strong text-ink transition-colors duration-200 group-hover:bg-white group-hover:text-primary group-hover:shadow-glow">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary shadow-glow">
                     <svg
                       className="h-6 w-6"
                       fill="none"

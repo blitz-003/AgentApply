@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ContactForm } from "@/components/marketing/contact-form";
 import { Reveal } from "@/components/motion/reveal";
@@ -37,31 +38,46 @@ export default function AboutPage() {
   return (
     <div className="bg-canvas">
       <section className="border-b border-hairline-soft">
-        <Reveal
-          variant="fade"
-          className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24"
-        >
-          <div className="max-w-2xl">
-            <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-              About us
-            </span>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight text-ink md:text-5xl">
-              <TextReveal as="span" text="We help great candidates stop being invisible" />
-            </h1>
-            <p className="mt-6 text-lg leading-relaxed text-body">
-              Agent Apply started with a frustrating observation: qualified
-              people were getting filtered out before a human ever saw their
-              resume. Not because they lacked skill — because their application
-              didn&apos;t speak the ATS&apos;s language.
-            </p>
-            <p className="mt-4 text-base leading-relaxed text-muted">
-              So we built a tool that does the tedious, brutal work for you:
-              parsing job descriptions, rewriting your resume for each role,
-              checking your ATS score, and drafting a cover letter that reads
-              like it was written by a person who actually cares.
-            </p>
-          </div>
-        </Reveal>
+        <div className="mx-auto grid min-h-[calc(100svh-80px)] max-w-[1280px] items-stretch gap-12 px-6 py-16 lg:grid-cols-2 lg:px-8 lg:py-24">
+          <Reveal variant="fade-up" className="self-center">
+            <div className="max-w-2xl">
+              <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                About us
+              </span>
+              <h1 className="mt-3 text-4xl font-bold tracking-tight text-ink md:text-5xl">
+                <TextReveal
+                  as="span"
+                  text="We help great candidates stop being invisible"
+                />
+              </h1>
+              <p className="mt-6 text-lg leading-relaxed text-body">
+                Agent Apply started with a frustrating observation: qualified
+                people were getting filtered out before a human ever saw their
+                resume. Not because they lacked skill — because their application
+                didn&apos;t speak the ATS&apos;s language.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-muted">
+                So we built a tool that does the tedious, brutal work for you:
+                parsing job descriptions, rewriting your resume for each role,
+                checking your ATS score, and drafting a cover letter that reads
+                like it was written by a person who actually cares.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={0.15} className="relative">
+            <div className="absolute -inset-y-[15%] -inset-x-[2.5%] overflow-hidden rounded-lg">
+              <Image
+                src="/image_1.jpg"
+                alt="The Agent Apply team reviewing resume results"
+                fill
+                priority
+                sizes="(max-width: 1024px) 92vw, 46vw"
+                className="object-cover object-top"
+              />
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       <section className="py-16 lg:py-24">

@@ -129,6 +129,32 @@ const testimonials = [
       "I applied to ten roles with tailored resumes and got four replies. The cover letters alone are worth it.",
     rating: "5.0",
   },
+  {
+    name: "Priya Nair",
+    role: "Data Analyst",
+    quote:
+      "The missing keyword list was brutal and honest. I fixed every gap it flagged and heard back the same week.",
+    rating: "5.0",
+  },
+  {
+    name: "Daniel Okafor",
+    role: "Frontend Engineer",
+    quote:
+      "Upload, tailor, export. What used to take me an entire evening now takes about ten minutes.",
+    rating: "5.0",
+  },
+  {
+    name: "Sofia Rossi",
+    role: "UX Researcher",
+    quote:
+      "Finally a score that tells me something actionable instead of a vanity number I cannot act on.",
+    rating: "4.5",
+  },
+];
+
+const testimonialRows = [
+  testimonials.slice(0, 3),
+  testimonials.slice(3, 6),
 ];
 
 function SectionHeading({
@@ -404,41 +430,57 @@ export default function Home() {
 
       {/* Testimonials */}
       <section className="border-t border-hairline-soft bg-surface-soft py-16 lg:py-24">
-        <Reveal variant="fade" className="mx-auto max-w-[1280px] px-6 lg:px-8">
+        <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
           <SectionHeading
             eyebrow="Testimonials"
             title="Loved by job seekers who stopped guessing"
           />
-          <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {testimonials.map((t, i) => (
-              <Reveal key={t.name} variant="zoom" delay={i * 0.1}>
-                <div className="h-full rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-glow">
-                  <div className="flex items-center gap-1 text-ink">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <svg
-                        key={j}
-                        className="h-4 w-4 fill-current"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z" />
-                      </svg>
-                    ))}
-                    <span className="ml-2 text-sm font-medium text-muted">
-                      {t.rating}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-body">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="mt-5 border-t border-hairline-soft pt-4">
-                    <div className="text-sm font-semibold text-ink">{t.name}</div>
-                    <div className="text-xs text-muted">{t.role}</div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </Reveal>
+        </div>
+
+        <div className="mt-14 space-y-6">
+          {testimonialRows.map((row, rowIndex) => (
+            <div key={rowIndex} className="overflow-hidden">
+              <div
+                className={
+                  rowIndex % 2 === 0
+                    ? "marquee-track flex w-max gap-6 pl-6"
+                    : "marquee-track-reverse flex w-max gap-6 pl-6"
+                }
+              >
+                {[...row, ...row].map((t, i) => (
+                  <article
+                    key={`${rowIndex}-${i}`}
+                    className="w-[360px] shrink-0 rounded-md border border-hairline-soft bg-canvas p-6 transition-shadow duration-200 hover:shadow-glow"
+                  >
+                    <div className="flex items-center gap-1 text-star">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <svg
+                          key={j}
+                          className="h-4 w-4 fill-current"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.2l7.1-.6z" />
+                        </svg>
+                      ))}
+                      <span className="ml-2 text-sm font-medium text-muted">
+                        {t.rating}
+                      </span>
+                    </div>
+                    <p className="mt-4 text-sm leading-relaxed text-body">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div className="mt-5 border-t border-hairline-soft pt-4">
+                      <div className="text-sm font-semibold text-ink">
+                        {t.name}
+                      </div>
+                      <div className="text-xs text-muted">{t.role}</div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Blog teaser */}
@@ -518,7 +560,7 @@ export default function Home() {
             </Link>
             <Link
               href="/pricing"
-              className="btn-grow inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink hover:bg-canvas"
+              className="btn-grow inline-flex h-12 items-center rounded-sm border border-ink px-7 text-base font-medium text-ink hover:border-primary hover:bg-canvas hover:text-primary hover:shadow-glow"
             >
               View Pricing
             </Link>

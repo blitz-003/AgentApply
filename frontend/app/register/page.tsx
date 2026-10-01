@@ -148,17 +148,17 @@ export default function RegisterPage() {
               {isSubmitting ? "Creating account..." : "Register"}
             </button>
           </form>
-
-          <p className="mt-6 border-t border-hairline pt-6 text-center text-sm text-muted">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-medium text-ink hover:text-primary"
-            >
-              Login
-            </Link>
-          </p>
         </div>
+
+        <p className="mt-3 text-center text-sm text-muted">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="font-medium text-ink hover:text-primary"
+          >
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );

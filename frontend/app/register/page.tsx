@@ -65,6 +65,7 @@ export default function RegisterPage() {
                 id="name"
                 type="text"
                 {...register("name")}
+                placeholder="Your full name"
                 className={inputClass}
                 disabled={isSubmitting}
               />
@@ -86,6 +87,7 @@ export default function RegisterPage() {
                 id="email"
                 type="email"
                 {...register("email")}
+                placeholder="you@example.com"
                 className={inputClass}
                 disabled={isSubmitting}
               />
@@ -106,6 +108,7 @@ export default function RegisterPage() {
               <PasswordInput
                 id="password"
                 {...register("password")}
+                placeholder="At least 8 characters"
                 className={inputClass}
                 disabled={isSubmitting}
               />
@@ -126,6 +129,7 @@ export default function RegisterPage() {
               <PasswordInput
                 id="confirmPassword"
                 {...register("confirmPassword")}
+                placeholder="Re-enter your password"
                 className={inputClass}
                 disabled={isSubmitting}
               />

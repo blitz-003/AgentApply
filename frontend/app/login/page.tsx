@@ -65,6 +65,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 {...register("email")}
+                placeholder="you@example.com"
                 className={inputClass}
                 disabled={isSubmitting}
               />
@@ -85,6 +86,7 @@ export default function LoginPage() {
               <PasswordInput
                 id="password"
                 {...register("password")}
+                placeholder="Enter your password"
                 className={inputClass}
                 disabled={isSubmitting}
               />

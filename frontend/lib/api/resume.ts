@@ -1,4 +1,4 @@
-import { api } from "./client";
+import { api, API_BASE_URL } from "./client";
 import type {
   ResumeListResponse,
   ResumeDetail,
@@ -28,7 +28,7 @@ export const resumeApi = {
     return api.upload<{ resume_data: ResumeData }>(`/resumes/${id}/upload`, formData);
   },
   export: async (id: string): Promise<Blob> => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/resumes/${id}/export`;
+    const url = `${API_BASE_URL}/resumes/${id}/export`;
     const response = await fetch(url, {
       method: "POST",
       credentials: "include",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import heroImage from "@/assets/image_1.jpg";
 import { ContactForm } from "@/components/marketing/contact-form";
 import { Reveal } from "@/components/motion/reveal";
 import { TextReveal } from "@/components/motion/text-reveal";
@@ -65,18 +66,19 @@ export default function AboutPage() {
             </div>
           </Reveal>
 
-          <Reveal variant="fade-up" delay={0.15} className="relative">
+          <div className="relative">
             <div className="absolute -inset-y-[15%] -inset-x-[2.5%] overflow-hidden rounded-lg">
               <Image
-                src="/image_1.jpg"
+                src={heroImage}
                 alt="The Agent Apply team reviewing resume results"
                 fill
-                priority
+                preload
+                placeholder="blur"
                 sizes="(max-width: 1024px) 92vw, 46vw"
                 className="object-cover object-top"
               />
             </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 

@@ -11,15 +11,18 @@ const marketingLinks = [
   { label: "Blog", href: "/blog" },
 ];
 
-const appLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Blog", href: "/blog" },
-];
+const dashboardLink = { label: "Dashboard", href: "/dashboard" };
 
 export function Navbar() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const navLinks = isLoading ? [] : isAuthenticated ? appLinks : marketingLinks;
+
+  // These links are valid for signed-in and signed-out visitors alike, so they
+  // must never wait on the auth request. Gating them on isLoading left the
+  // navbar empty whenever /auth/me was slow or unreachable.
+  const navLinks = isAuthenticated
+    ? [...marketingLinks, dashboardLink]
+    : marketingLinks;
 
   return (
     <header className="sticky top-0 z-50 border-b border-hairline bg-canvas">
@@ -48,8 +51,8 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          {isLoading ? null : isAuthenticated ? (
+        <div className="flex min-h-10 min-w-[9.5rem] items-center justify-end gap-3">
+          {isAuthenticated ? (
             <>
               <span className="hidden text-sm text-muted md:block">
                 {user?.name}
@@ -129,7 +132,7 @@ export function Navbar() {
               </Link>
             ))}
             <div className="my-2 border-t border-hairline-soft" />
-            {isLoading ? null : isAuthenticated ? (
+            {isAuthenticated ? (
               <>
                 <button
                   onClick={() => {

@@ -10,6 +10,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_API_URL
+RUN test -n "$NEXT_PUBLIC_API_URL" || (echo "ERROR: NEXT_PUBLIC_API_URL build arg is required. NEXT_PUBLIC_* values are inlined at build time, so passing them at runtime has no effect. Build with: docker compose build --build-arg NEXT_PUBLIC_API_URL=https://your-api-host/api/v1" && exit 1)
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 RUN npm run build
 
 FROM base AS runner

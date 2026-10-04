@@ -1,19 +1,30 @@
-const API_BASE_URL =
+export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 type RequestOptions = RequestInit;
 
+const DEFAULT_TIMEOUT_MS = 15000;
+export const AUTH_TIMEOUT_MS = 4000;
+const UPLOAD_TIMEOUT_MS = 120000;
+
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {},
+  timeoutMs: number = DEFAULT_TIMEOUT_MS,
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
   const config: RequestInit = {
     ...options,
     credentials: "include",
+    signal: options.signal ?? AbortSignal.timeout(timeoutMs),
     headers: {
-      "Content-Type": "application/json",
+      // Only send Content-Type when there is a body. Setting it on a GET makes
+      // the request non-simple, which forces a CORS preflight (OPTIONS) before
+      // every call and doubles the round-trips to the API.
+      ...(options.body !== undefined
+        ? { "Content-Type": "application/json" }
+        : {}),
       ...options.headers,
     },
   };
@@ -44,6 +55,7 @@ async function uploadRequest<T>(
     credentials: "include",
     method: "POST",
     body: formData,
+    signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
   };
 
   const response = await fetch(url, config);
@@ -59,7 +71,8 @@ async function uploadRequest<T>(
 }
 
 export const api = {
-  get: <T>(endpoint: string) => request<T>(endpoint),
+  get: <T>(endpoint: string, timeoutMs?: number) =>
+    request<T>(endpoint, {}, timeoutMs),
   post: <T>(endpoint: string, data?: unknown) =>
     request<T>(endpoint, {
       method: "POST",

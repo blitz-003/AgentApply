@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request, Response
 
-from app.config import settings
 from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, UserResponse
 from app.services.auth import auth_service
 

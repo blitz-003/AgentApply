@@ -46,7 +46,7 @@ class ResponseParser:
                 continue
 
         logger.error(f"Failed to parse AI response (first 500 chars): {cleaned[:500]}")
-        raise ValueError(f"Failed to parse AI response as JSON")
+        raise ValueError("Failed to parse AI response as JSON")
 
     @staticmethod
     def _extract_json_object(text: str, start: int) -> str | None:

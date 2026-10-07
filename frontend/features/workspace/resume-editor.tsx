@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import type { ResumeDetail } from "@/types/resume";
+import type { ResumeDetail, SkillGroup } from "@/types/resume";
 import {
   useUpdateResume,
   useImproveSummary,
@@ -91,12 +91,84 @@ function getProjects(data: Record<string, unknown>): ProjectEntry[] {
   return [];
 }
 
-function getSkills(data: Record<string, unknown>): string[] {
+const DEFAULT_SKILL_CATEGORY = "Skills";
+// New suggestions go into an "Others" bucket. This matches the PDF renderer,
+// which only ever prints the two strongest categories plus "Others", so a group
+// named "Suggested" would be folded into Others anyway and shown as a stray
+// heading in the editor.
+const SUGGESTED_SKILL_CATEGORY = "Others";
+// Older resumes were saved with the previous name; treat them as the same group
+// so a reload does not leave two near-duplicate catch-all groups behind.
+const LEGACY_SUGGESTED_CATEGORY = "Suggested";
+const CATCH_ALL_CATEGORIES = [SUGGESTED_SKILL_CATEGORY, LEGACY_SUGGESTED_CATEGORY];
+
+function getSkills(data: Record<string, unknown>): SkillGroup[] {
   const skills = data.skills;
-  if (Array.isArray(skills)) {
-    return skills.map(String);
+  if (!Array.isArray(skills)) return [];
+
+  const groups: SkillGroup[] = [];
+  const loose: string[] = [];
+
+  for (const entry of skills) {
+    if (entry && typeof entry === "object") {
+      const group = entry as Record<string, unknown>;
+      const items = Array.isArray(group.items)
+        ? group.items.map(String).filter(Boolean)
+        : [];
+      if (items.length === 0) continue;
+      const category = String(group.category || "").trim() || DEFAULT_SKILL_CATEGORY;
+      groups.push({ category, items });
+    } else if (typeof entry === "string" && entry.trim()) {
+      loose.push(entry.trim());
+    }
   }
-  return [];
+
+  // Older records store a flat list; keep them in one group rather than losing them.
+  if (loose.length > 0) {
+    groups.push({ category: DEFAULT_SKILL_CATEGORY, items: loose });
+  }
+  return groups;
+}
+
+function flattenSkills(groups: SkillGroup[]): string[] {
+  return groups.flatMap((g) => g.items);
+}
+
+/** Add a skill to the group it already belongs to, else the default group. */
+function addSkillToGroups(groups: SkillGroup[], skill: string): SkillGroup[] {
+  const existing = groups.find((g) => g.items.includes(skill));
+  if (existing) return groups;
+  if (groups.some((g) => g.category === DEFAULT_SKILL_CATEGORY)) {
+    return groups.map((g) =>
+      g.category === DEFAULT_SKILL_CATEGORY
+        ? { ...g, items: [...g.items, skill] }
+        : g,
+    );
+  }
+  return [...groups, { category: DEFAULT_SKILL_CATEGORY, items: [skill] }];
+}
+
+/**
+ * The suggest-skills endpoint returns a flat list with no category mapping, so
+ * new suggestions go in their own group instead of being guessed into an
+ * existing category.
+ */
+function mergeSuggestedSkills(
+  groups: SkillGroup[],
+  suggested: string[],
+): SkillGroup[] {
+  const existing = new Set(flattenSkills(groups));
+  const fresh = (suggested || []).map((s) => String(s).trim()).filter(
+    (s) => s && !existing.has(s),
+  );
+  if (fresh.length === 0) return groups;
+
+  const withoutOld = groups.filter((g) => !CATCH_ALL_CATEGORIES.includes(g.category));
+  const previous = groups
+    .filter((g) => CATCH_ALL_CATEGORIES.includes(g.category))
+    .flatMap((g) => g.items ?? []);
+  const merged = [...previous, ...fresh];
+  return [...withoutOld, { category: SUGGESTED_SKILL_CATEGORY, items: merged }];
 }
 
 function getEducation(data: Record<string, unknown>): EducationEntry[] {
@@ -124,7 +196,7 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   const [summary, setSummary] = useState(() => getSummary(resumeData));
   const [experience, setExperience] = useState<ExperienceEntry[]>(() => getExperience(resumeData));
   const [projects, setProjects] = useState<ProjectEntry[]>(() => getProjects(resumeData));
-  const [skills, setSkills] = useState<string[]>(() => getSkills(resumeData));
+  const [skills, setSkills] = useState<SkillGroup[]>(() => getSkills(resumeData));
   const [education, setEducation] = useState<EducationEntry[]>(() => getEducation(resumeData));
   const [newSkill, setNewSkill] = useState("");
   const [improvingExpIndex, setImprovingExpIndex] = useState<number | null>(null);
@@ -191,21 +263,30 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
   };
 
   const handleSuggestSkills = () => {
-    suggestSkillsMutation.mutate(skills, {
-      onSuccess: (result) => setSkills(result.skills),
+    suggestSkillsMutation.mutate(flattenSkills(skills), {
+      onSuccess: (result) =>
+        setSkills((prev) => mergeSuggestedSkills(prev, result.skills)),
       onError: () => toast.error("AI request failed"),
     });
   };
 
   const handleAddSkill = () => {
-    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-      setSkills((prev) => [...prev, newSkill.trim()]);
-      setNewSkill("");
-    }
+    const value = newSkill.trim();
+    if (!value) return;
+    setSkills((prev) => addSkillToGroups(prev, value));
+    setNewSkill("");
   };
 
-  const handleRemoveSkill = (skill: string) => {
-    setSkills((prev) => prev.filter((s) => s !== skill));
+  const handleRemoveSkill = (category: string, skill: string) => {
+    setSkills((prev) =>
+      prev
+        .map((group) =>
+          group.category === category
+            ? { ...group, items: group.items.filter((s) => s !== skill) }
+            : group,
+        )
+        .filter((group) => group.items.length > 0),
+    );
   };
 
   const handleAddExperience = () => {
@@ -562,22 +643,36 @@ export function ResumeEditor({ resumeId, resume }: ResumeEditorProps) {
                   {suggestSkillsMutation.isPending ? "Suggesting..." : "Suggest Skills"}
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="inline-flex items-center gap-1 rounded-full bg-surface-soft px-3 py-1 text-sm text-ink"
-                  >
-                    {skill}
-                    <button
-                      onClick={() => handleRemoveSkill(skill)}
-                      className="ml-1 text-muted-soft hover:text-muted"
-                    >
-                      &times;
-                    </button>
-                  </span>
-                ))}
-              </div>
+              {skills.length === 0 ? (
+                <p className="mb-4 text-sm text-muted-soft">
+                  No skills yet. Add one below or use Suggest Skills.
+                </p>
+              ) : (
+                skills.map((group) => (
+                  <div key={group.category} className="mb-4 last:mb-0">
+                    <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+                      {group.category}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {group.items.map((skill) => (
+                        <span
+                          key={`${group.category}:${skill}`}
+                          className="inline-flex items-center gap-1 rounded-full bg-surface-soft px-3 py-1 text-sm text-ink"
+                        >
+                          {skill}
+                          <button
+                            onClick={() => handleRemoveSkill(group.category, skill)}
+                            aria-label={`Remove ${skill}`}
+                            className="ml-1 text-muted-soft hover:text-muted"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              )}
               <div className="flex gap-2">
                 <input
                   type="text"

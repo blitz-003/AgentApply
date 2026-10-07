@@ -64,11 +64,17 @@ export interface EducationEntry {
   end_date: string;
 }
 
+export interface SkillGroup {
+  category: string;
+  items: string[];
+}
+
 export interface ResumeData {
   personal_info: PersonalInfo;
   summary: string;
   experience: ExperienceEntry[];
   projects: ProjectEntry[];
-  skills: string[];
+  /** Grouped by category. AI generation produces this shape. */
+  skills: SkillGroup[];
   education: EducationEntry[];
 }

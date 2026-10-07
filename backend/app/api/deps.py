@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Request
+from fastapi import HTTPException, Request
 
 from app.schemas.auth import UserResponse
 from app.services.auth import auth_service

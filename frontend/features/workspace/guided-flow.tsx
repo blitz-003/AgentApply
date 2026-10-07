@@ -7,6 +7,7 @@ import {
   useUploadResume,
 } from "./hooks";
 import { downloadAll } from "@/lib/pdf/generate-pdf";
+import { ApiError } from "@/lib/api/client";
 import { EditorPreview } from "./editor-preview";
 import type { GenerateResponse } from "@/types/ai";
 
@@ -116,6 +117,26 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
             setStep("results");
           },
           onError: (err) => {
+            // Surface the real, code-level cause. Collapsing every failure into
+            // one message made 502s undiagnosable: the log said "AI generation
+            // failed" while the provider had actually reported a truncated
+            // output with four missing schema fields.
+            console.error("[ai/generate] failed:", err);
+            if (err instanceof ApiError && err.isRateLimited) {
+              const wait = err.retryAfter
+                ? ` Please retry in about ${err.retryAfter} seconds.`
+                : " Please try again shortly.";
+              toast.error(`AI is at its rate limit right now.${wait}`, {
+                description: err.diagnostic,
+              });
+              setStep("resume-source");
+              return;
+            }
+            if (err instanceof ApiError) {
+              toast.error(err.message, { description: err.diagnostic });
+              setStep("resume-source");
+              return;
+            }
             const msg =
               err instanceof Error ? err.message : "Generation failed";
             toast.error(`AI generation failed: ${msg}`);

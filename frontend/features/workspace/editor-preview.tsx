@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { renderResumeHtml, renderCoverLetterHtml, type ResumeData } from "@/lib/pdf/generate-pdf";
+import {
+  renderResumeHtml,
+  renderCoverLetterHtml,
+  PAGE_WIDTH_PX,
+  PAGE_HEIGHT_PX,
+  type ResumeData,
+} from "@/lib/pdf/generate-pdf";
 import { resumeToText, textToResumeData } from "@/lib/resume-text";
 import type { GenerateResponse } from "@/types/ai";
 
@@ -47,7 +53,9 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
 
   const previewHtml = useMemo(() => {
     try {
-      return renderResumeHtml(previewData as ResumeData);
+      // The preview renders the same compact page as the export so the on
+      // screen scale matches the downloaded PDF (WYSIWYG).
+      return renderResumeHtml(previewData as ResumeData, { compact: true });
     } catch {
       return '<div style="padding: 20px; color: #999;">Preview unavailable</div>';
     }
@@ -127,9 +135,11 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
               <span className="text-sm font-medium text-muted">Preview</span>
             </div>
             <div className="flex-1 overflow-y-auto bg-surface-strong p-8 min-h-0">
-              <div className="mx-auto bg-white shadow-card" style={{ maxWidth: 600, minHeight: 400 }}>
-                <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
-              </div>
+              <PagePreview
+                html={previewHtml}
+                widthPx={PAGE_WIDTH_PX}
+                heightPx={PAGE_HEIGHT_PX}
+              />
             </div>
           </div>
         </div>
@@ -151,15 +161,61 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
               <span className="text-sm font-medium text-muted">Preview</span>
             </div>
             <div className="flex-1 overflow-y-auto bg-surface-strong p-8 min-h-0">
-              <div className="mx-auto bg-white shadow-card overflow-hidden" style={{ width: 600, height: 849 }}>
-                <div style={{ width: 800, transform: 'scale(0.75)', transformOrigin: 'top left' }}>
-                  <div dangerouslySetInnerHTML={{ __html: coverLetterHtml }} />
-                </div>
-              </div>
+              <PagePreview
+                html={coverLetterHtml}
+                widthPx={PAGE_WIDTH_PX}
+                heightPx={PAGE_HEIGHT_PX}
+              />
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+interface PagePreviewProps {
+  html: string;
+  widthPx: number;
+  heightPx: number;
+}
+
+function PagePreview({ html, widthPx, heightPx }: PagePreviewProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const avail = Math.max(el.clientWidth - 64, 1);
+      // Fit the full page width; never upscale beyond 1:1.
+      setScale(Math.min(avail / widthPx, 1));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [widthPx]);
+
+  return (
+    <div ref={containerRef} className="flex justify-center">
+      <div
+        style={{ width: widthPx * scale, height: heightPx * scale }}
+        className="relative shrink-0"
+      >
+        <div
+          style={{
+            width: widthPx,
+            height: heightPx,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+          }}
+          className="absolute left-0 top-0 overflow-hidden bg-white shadow-card"
+        >
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+      </div>
     </div>
   );
 }

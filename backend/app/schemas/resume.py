@@ -49,15 +49,29 @@ class EducationEntry(BaseModel):
     end_date: str = ""
 
 
+class SkillGroup(BaseModel):
+    """Skills are grouped by category, e.g. {"category": "Frontend", "items": [...]}.
+
+    This is the canonical shape produced by AI generation and expected by the
+    PDF renderers. Older records may hold a bare list of strings, so readers must
+    stay tolerant of both.
+    """
+
+    category: str = ""
+    items: list[str] = []
+
+
 class ResumeData(BaseModel):
     personal_info: PersonalInfo = PersonalInfo()
     summary: str = ""
     experience: list[ExperienceEntry] = []
     projects: list[ProjectEntry] = []
-    skills: list[str] = []
+    skills: list[SkillGroup] = []
     education: list[EducationEntry] = []
-    certifications: list[dict] = []
-    languages: list[dict] = []
+    # The AI schema, prompt, and frontend text renderer all treat these as
+    # plain strings, so dict-typed fields here would reject valid AI output.
+    certifications: list[str] = []
+    languages: list[str] = []
     achievements: list[str] = []
 
 

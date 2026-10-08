@@ -1,6 +1,5 @@
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import type { CoverLetter } from "@/types/ai";
 import type { SkillGroup } from "@/types/resume";
 
 /** @deprecated Use SkillGroup from @/types/resume. */
@@ -236,8 +235,13 @@ async function renderToPdf(html: string, filename: string): Promise<void> {
     if (naturalHeightMm <= PAGE_HEIGHT_MM) {
       pdf.addImage(imgData, "JPEG", 0, 0, PAGE_WIDTH_MM, PAGE_HEIGHT_MM);
     } else {
+      // Content taller than one page: shrink it to fit the sheet height and
+      // centre it horizontally so any residual space is split evenly instead of
+      // leaving a blank band on the right edge.
       const scale = PAGE_HEIGHT_MM / naturalHeightMm;
-      pdf.addImage(imgData, "JPEG", 0, 0, PAGE_WIDTH_MM * scale, PAGE_HEIGHT_MM);
+      const scaledWidth = PAGE_WIDTH_MM * scale;
+      const x = (PAGE_WIDTH_MM - scaledWidth) / 2;
+      pdf.addImage(imgData, "JPEG", x, 0, scaledWidth, PAGE_HEIGHT_MM);
     }
 
     const scaleToFit = Math.min(1, PAGE_HEIGHT_MM / naturalHeightMm);
@@ -460,6 +464,17 @@ function stripAddressBlock(text: string): string {
   return start >= 0 ? lines.slice(start).join('\n') : text;
 }
 
+function renderClosingBlock(paragraphs: string[], signOffIndex: number): string {
+  // The sign-off is the "Yours sincerely," line plus the name/position rows that
+  // follow it. Render them flush left in one block instead of treating "Yours
+  // sincerely," as an indented body paragraph.
+  const signOff = paragraphs
+    .slice(signOffIndex)
+    .map((p) => escapeHtml(p.trim()).replace(/\n/g, '<br>'))
+    .join('<br>');
+  return `<div style="font-size: 10.5pt; color: #000000; margin-top: 18px;">${signOff}</div>`;
+}
+
 export function renderCoverLetterHtml(letter: {
   content: string;
   job_title?: string;
@@ -467,23 +482,29 @@ export function renderCoverLetterHtml(letter: {
 }): string {
   const stripped = stripAddressBlock(letter.content);
   const normalized = stripped.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n');
-  const sections = `<div style="margin-bottom: 16px; text-align: center;">
-        <div style="font-size: 14pt; font-weight: 400; text-transform: uppercase; margin-bottom: 4px;">COVER LETTER</div>
-        <div style="font-size: 14pt; color: #000000;">
+  const paragraphs = normalized.split('\n\n').filter(Boolean);
+
+  const signOffIndex = paragraphs.findIndex((p) => /^Yours sincerely[,:]?$/i.test(p.trim()));
+  const body = signOffIndex >= 0 ? paragraphs.slice(0, signOffIndex) : paragraphs;
+
+  const sections = `<div style="margin-bottom: 12px; text-align: center;">
+        <div style="font-size: 12pt; font-weight: 400; text-transform: uppercase; margin-bottom: 3px;">COVER LETTER</div>
+        <div style="font-size: 12pt; color: #000000;">
           <strong>${escapeHtml(letter.job_title)}</strong>
           ${letter.company_name ? ` | <span>${escapeHtml(letter.company_name)}</span>` : ""}
         </div>
       </div>
-      <div style="font-size: 11pt; color: #000000; line-height: 1.6;">
-        ${normalized.split('\n\n').filter(Boolean).map((p, i, arr) =>
-          `<p style="margin: 0 0 24px 0; line-height: 1.6;${i > 0 && i < arr.length - 1 ? ' text-indent: 2em;' : ''}">${escapeHtml(p.trim()).replace(/\n/g, '<br>')}</p>`
+      <div style="font-size: 10.5pt; color: #000000; line-height: 1.45;">
+        ${body.map((p, i, arr) =>
+          `<p style="margin: 0 0 18px 0; line-height: 1.45;${i > 0 && i < arr.length - 1 ? ' text-indent: 2em;' : ''}">${escapeHtml(p.trim()).replace(/\n/g, '<br>')}</p>`
         ).join('')}
+        ${signOffIndex >= 0 ? renderClosingBlock(paragraphs, signOffIndex) : ''}
       </div>`;
   return pageShell(
     COVER_LETTER_GEOMETRY,
     sections,
     "'Helvetica Neue', Helvetica, Arial, sans-serif",
-    "1.5"
+    "1.45"
   );
 }
 
@@ -501,20 +522,31 @@ export async function generateResumePDF(
 }
 
 export async function generateCoverLetterPDF(
-  content: string,
+  coverLetter: {
+    content: string;
+    job_title?: string;
+    company_name?: string;
+  },
   filename: string
 ): Promise<void> {
-  const html = renderCoverLetterHtml({ content, job_title: "", company_name: "" } as CoverLetter);
+  const html = renderCoverLetterHtml(coverLetter);
   await renderToPdf(html, filename);
 }
 
 export async function downloadAll(
   resumeData: ResumeData,
-  coverLetterContent: string,
+  coverLetter: {
+    content: string;
+    job_title?: string;
+    company_name?: string;
+  },
   baseName: string
 ): Promise<void> {
   const safeBase = String(baseName).replace(/[^a-zA-Z0-9]/g, "_");
   const resumePromise = generateResumePDF(resumeData, `${safeBase}_Resume.pdf`);
-  const clPromise = generateCoverLetterPDF(coverLetterContent, `${safeBase}_Cover_Letter.pdf`);
+  const clPromise = generateCoverLetterPDF(
+    coverLetter,
+    `${safeBase}_Cover_Letter.pdf`
+  );
   await Promise.all([resumePromise, clPromise]);
 }

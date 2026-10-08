@@ -49,6 +49,9 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
   const [generateResult, setGenerateResult] = useState<GenerateResponse | null>(
     null,
   );
+  const [editedCoverContent, setEditedCoverContent] = useState<string | null>(
+    null,
+  );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -158,13 +161,21 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
       (generateResult.resume_data?.personal_info as Record<string, string>) ||
       {};
     const name = pi.name || "Resume";
-    const coverContent =
+    const stored =
       ((generateResult.cover_letter as Record<string, unknown>)
         ?.content as string) || "";
+    const coverContent = editedCoverContent ?? stored;
     if (coverContent) {
       await downloadAll(
         generateResult.resume_data as Record<string, unknown>,
-        coverContent,
+        {
+          content: coverContent,
+          job_title: (generateResult.cover_letter as Record<string, unknown>)
+            ?.job_title as string | undefined,
+          company_name: (
+            generateResult.cover_letter as Record<string, unknown>
+          )?.company_name as string | undefined,
+        },
         name,
       );
     } else {
@@ -578,6 +589,7 @@ export function GuidedFlow({ resumeId }: GuidedFlowProps) {
           initialData={data}
           generateResult={generateResult}
           onDownloadAll={handleDownloadAll}
+          onCoverLetterChange={setEditedCoverContent}
         />
       </div>
     );

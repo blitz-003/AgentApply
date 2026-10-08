@@ -16,15 +16,17 @@ interface EditorPreviewProps {
   generateResult?: GenerateResponse | null;
   onDownloadAll?: () => void;
   onChange?: (data: Record<string, unknown>) => void;
+  onCoverLetterChange?: (content: string) => void;
 }
 
 type ViewMode = "resume" | "coverletter";
 
-export function EditorPreview({ initialData, generateResult, onDownloadAll, onChange }: EditorPreviewProps) {
+export function EditorPreview({ initialData, generateResult, onDownloadAll, onChange, onCoverLetterChange }: EditorPreviewProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("resume");
   const [text, setText] = useState(() => resumeToText(initialData));
   const [previewData, setPreviewData] = useState(initialData);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const coverDebounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const coverLetterContent = generateResult?.cover_letter as Record<string, unknown> | undefined;
   const [coverText, setCoverText] = useState(() => (coverLetterContent?.content as string) || "");
@@ -50,6 +52,14 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
       onChange?.(parsed);
     }, 300);
   }, [onChange]);
+
+  const handleCoverLetterChange = useCallback((value: string) => {
+    setCoverText(value);
+    if (coverDebounceRef.current) clearTimeout(coverDebounceRef.current);
+    coverDebounceRef.current = setTimeout(() => {
+      onCoverLetterChange?.(value);
+    }, 300);
+  }, [onCoverLetterChange]);
 
   const previewHtml = useMemo(() => {
     try {
@@ -151,7 +161,7 @@ export function EditorPreview({ initialData, generateResult, onDownloadAll, onCh
             </div>
             <textarea
               value={coverText}
-              onChange={(e) => setCoverText(e.target.value)}
+              onChange={(e) => handleCoverLetterChange(e.target.value)}
               className="flex-1 resize-none border-0 bg-surface-soft p-4 font-mono text-xs leading-relaxed text-ink outline-none focus:bg-canvas min-h-0"
             />
           </div>
@@ -188,15 +198,20 @@ function PagePreview({ html, widthPx, heightPx }: PagePreviewProps) {
     const el = containerRef.current;
     if (!el) return;
     const update = () => {
-      const avail = Math.max(el.clientWidth - 64, 1);
-      // Fit the full page width; never upscale beyond 1:1.
-      setScale(Math.min(avail / widthPx, 1));
+      // Measure the scrolling pane (the parent), not the page wrapper whose
+      // size follows the scaled page itself.
+      const pane = el.parentElement;
+      const availW = Math.max((pane ? pane.clientWidth : el.clientWidth) - 64, 1);
+      const availH = Math.max((pane ? pane.clientHeight : el.clientHeight) - 64, 1);
+      // Fit the whole A4 page to the pane so the preview matches the PDF page.
+      setScale(Math.min(availW / widthPx, availH / heightPx, 1));
     };
     update();
     const ro = new ResizeObserver(update);
-    ro.observe(el);
+    const target = el.parentElement ?? el;
+    ro.observe(target);
     return () => ro.disconnect();
-  }, [widthPx]);
+  }, [widthPx, heightPx]);
 
   return (
     <div ref={containerRef} className="flex justify-center">

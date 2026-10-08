@@ -96,7 +96,16 @@ export function useExportResume() {
         (resumeData.personal_info as Record<string, string> | undefined)
           ?.name || detail.title || "Resume";
       if (coverContent) {
-        await downloadAll(resumeData, coverContent, name);
+        const cover = detail.cover_letter as Record<string, unknown> | null;
+        await downloadAll(
+          resumeData,
+          {
+            content: coverContent,
+            job_title: cover?.job_title as string | undefined,
+            company_name: cover?.company_name as string | undefined,
+          },
+          name,
+        );
       } else {
         await generateResumePDF(resumeData, `${name}_Resume.pdf`);
       }
